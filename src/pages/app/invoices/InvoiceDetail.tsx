@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
@@ -21,6 +22,7 @@ export default function InvoiceDetail() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { generateAndUpload, isGenerating } = useGeneratePDF();
+  const [sendingEmail, setSendingEmail] = useState(false);
 
   const { data: invoice, isLoading } = useQuery({
     queryKey: ['invoice', id],
@@ -80,6 +82,34 @@ export default function InvoiceDetail() {
 
   const handlePrint = () => window.print();
 
+  const handleSendEmail = async () => {
+    if (!invoice?.clientEmail) {
+      alert('This customer does not have an email address associated with the invoice.');
+      return;
+    }
+    setSendingEmail(true);
+    try {
+      const res = await fetch('/api/invoices/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+        body: JSON.stringify({ invoiceId: id }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to send email');
+      }
+      alert('Invoice sent successfully!');
+      queryClient.invalidateQueries({ queryKey: ['invoice', id] });
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setSendingEmail(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
@@ -122,6 +152,14 @@ export default function InvoiceDetail() {
               ✓ Mark as Paid
             </Button>
           )}
+          <Button
+            variant="outline"
+            className="text-blue-700 border-blue-300 hover:bg-blue-50"
+            onClick={handleSendEmail}
+            disabled={sendingEmail}
+          >
+            {sendingEmail ? '⏳ Sending...' : '✉️ Send Email'}
+          </Button>
           <Button variant="outline" onClick={handlePrint}>🖨️ Print</Button>
           <Button
             variant="outline"

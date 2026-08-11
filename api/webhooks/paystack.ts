@@ -3,6 +3,9 @@ import crypto from 'crypto';
 import { db } from '../../src/db';
 import { invoices, payments, receipts, businesses } from '../../src/db/schema';
 import { eq, and } from 'drizzle-orm';
+import { getResendClient } from '../utils/emailClient';
+import { render } from '@react-email/components';
+import { ReceiptEmail } from '../../src/emails/ReceiptEmail';
 
 // Verify Paystack webhook signature
 function verifyPaystackSignature(body: string, signature: string): boolean {
@@ -79,7 +82,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const [business] = await db.select().from(businesses).where(eq(businesses.id, invoice.businessId));
     const receiptNumber = `RCP-${Date.now().toString().slice(-6)}`;
 
-    await db.insert(receipts).values({
+    const [newReceipt] = await db.insert(receipts).values({
       businessId: invoice.businessId,
       invoiceId: invoice.id,
       clientName: invoice.clientName,
@@ -94,9 +97,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       subtotal: String(amountInNaira),
       total: String(amountInNaira),
       notes: `Payment received via Paystack. Reference: ${reference}`,
-    });
+    }).returning();
 
     console.log(`✅ Paystack webhook processed: Invoice ${invoice.invoiceNumber} — ${amountInNaira} ${currency}`);
+
+    // 6. Send the Receipt Email
+    if (invoice.clientEmail) {
+      try {
+        const resend = await getResendClient(business.ownerId);
+        const host = req.headers.origin || `https://${req.headers.host}`;
+        const dashboardLink = `${host}/login`;
+        
+        await resend.emails.send({
+          from: 'InvoiceHub <billing@invoicehub.com>',
+          to: [invoice.clientEmail],
+          subject: `Payment Receipt ${receiptNumber} from ${business.name}`,
+          html: render(ReceiptEmail({ receipt: newReceipt, business, dashboardLink })),
+        });
+        console.log(`✅ Receipt email sent to ${invoice.clientEmail}`);
+      } catch (emailErr) {
+        console.error('Failed to send receipt email:', emailErr);
+      }
+    }
 
     return res.status(200).json({ success: true });
   } catch (error: any) {
