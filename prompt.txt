@@ -1,0 +1,1849 @@
+1. Master Development Prompt
+INVOICEHUB - MASTER DEVELOPMENT PROMPT
+
+Build a production-ready SaaS web application called InvoiceHub.
+
+Product
+
+InvoiceHub is a business document and billing platform that allows businesses to create, customize, send and manage:
+
+Invoices
+Quotations
+Receipts
+Business letters
+Customers
+Payments
+Document history
+
+Businesses can customize their documents with their own:
+
+Logo
+Brand colors
+Company information
+Letterhead
+Watermark
+Digital signature
+Templates
+Footer
+Payment information
+
+The application must be responsive and installable as a Progressive Web App (PWA) on Android and iOS.
+
+Tagline:
+
+InvoiceHub - Create. Send. Get Paid.
+
+TECHNOLOGY STACK
+
+Use:
+
+Frontend
+React
+Vite
+TypeScript
+Tailwind CSS
+shadcn/ui
+React Router
+TanStack Query
+React Hook Form
+Zod
+Authentication
+Supabase Auth
+
+Support:
+
+Email/password registration
+Login
+Logout
+Email verification
+Forgot password
+Reset password
+Session management
+Database
+Neon PostgreSQL
+Drizzle ORM
+File Storage
+Vercel Blob
+
+Store:
+
+Company logos
+Signatures
+Watermarks
+Generated PDFs
+Generated DOCX files
+Other business assets
+Email
+Resend
+React Email
+Payments
+Paystack
+
+Paystack is used for:
+
+Invoice/customer payments
+Invoice payment links
+SaaS subscription payments
+Hosting
+Vercel
+
+The entire application should be deployable on Vercel.
+
+Do not require a traditional PHP/Node server.
+
+Use Vercel Server Functions/API routes for backend operations.
+
+APPLICATION STRUCTURE
+
+There must be three distinct areas:
+
+Public
+
+/
+/pricing
+/login
+/register
+/forgot-password
+/reset-password
+/verify-email
+/pay/
+
+User application
+
+/app/dashboard
+/app/invoices
+/app/invoices/create
+/app/invoices/
+/app/quotations
+/app/quotations/create
+/app/quotations/
+/app/receipts
+/app/receipts/
+/app/letters
+/app/letters/create
+/app/letters/
+/app/customers
+/app/customers/
+/app/history
+/app/subscription
+/app/settings
+
+Admin application
+
+/admin/dashboard
+/admin/users
+/admin/users/
+/admin/businesses
+/admin/businesses/
+/admin/plans
+/admin/subscriptions
+/admin/payments
+/admin/refunds
+/admin/invoices
+/admin/quotations
+/admin/receipts
+/admin/letters
+/admin/templates
+/admin/emails
+/admin/payment-gateways
+/admin/reports
+/admin/admins
+/admin/roles
+/admin/activity-logs
+/admin/settings
+
+The admin area must have a completely separate layout and navigation from the user application.
+
+Never expose admin functionality through normal user routes.
+
+USER REGISTRATION
+
+Registration should collect:
+
+Full name
+Email
+Password
+Phone number
+
+After registration:
+
+Create Supabase Auth account.
+Create user record.
+Send verification email.
+After verification, allow the user to create their business.
+Start the company setup wizard.
+
+Send a welcome email through Resend after successful account creation.
+
+COMPANY SETUP WIZARD
+
+After registration, show:
+
+Step 1 - Business Information
+
+Fields:
+
+Business name
+Business type
+Email
+Phone
+Address
+Website
+Registration number
+Tax ID
+Currency
+Step 2 - Logo
+
+Allow:
+
+Upload logo
+JPG
+PNG
+WEBP
+
+Store the image in Vercel Blob.
+
+Step 3 - Brand Colors
+
+Allow the business owner to choose:
+
+Primary color
+Secondary color
+Accent color
+Background color
+Text color
+
+Provide:
+
+Color picker
+HEX input
+Preset color palettes
+
+Provide a live invoice preview while the user changes colors.
+
+The selected colors should automatically apply to the business dashboard, invoices, quotations, receipts, letters, customer payment page and emails.
+
+Step 4 - Digital Signature
+
+Allow the user to:
+
+Option A
+
+Type their name and generate a signature-style graphic.
+
+Option B
+
+Upload an image of their handwritten signature.
+
+For uploaded signatures:
+
+Crop the signature
+Remove white background
+Remove noise
+Improve contrast
+Extract signature strokes
+Produce transparent PNG
+Allow preview
+Allow replacement/deletion
+
+Store the resulting signature in Vercel Blob.
+
+Clearly treat this as an electronic signature image unless cryptographic document signing is implemented.
+
+Step 5 - Watermark
+
+Allow:
+
+Enable/disable watermark
+Text watermark
+Logo watermark
+Opacity
+Position
+Rotation
+Step 6 - Template
+
+Allow the user to choose a default template:
+
+Modern
+Classic
+Professional
+Minimal
+Corporate
+Step 7 - Complete Setup
+
+Show the finished branded document preview.
+
+Then redirect to:
+
+/app/dashboard
+
+DASHBOARD
+
+Create a clean SaaS dashboard.
+
+Show:
+
+Total invoices
+Paid invoices
+Outstanding amount
+Overdue amount
+Total quotations
+Total receipts
+Total customers
+
+Show revenue/payment chart.
+
+Show recent documents.
+
+Quick actions:
+
+Create Invoice
+Create Quotation
+Create Receipt
+Create Letter
+Add Customer
+CUSTOMER MANAGEMENT
+
+Users can:
+
+Create customers
+Edit customers
+Delete customers
+Search customers
+Filter customers
+View customer profile
+View customer invoices
+View quotations
+View receipts
+View payment history
+
+Customer fields:
+
+Name
+Company
+Email
+Phone
+Address
+Tax ID
+Notes
+INVOICES
+
+Allow users to create professional invoices.
+
+Invoice fields:
+
+Customer
+Invoice number
+Issue date
+Due date
+Currency
+Products/services
+Description
+Quantity
+Unit price
+Discount
+Tax/VAT
+Notes
+Terms and conditions
+Payment information
+
+Automatically calculate:
+
+Subtotal
+Discount
+Tax
+Total
+Amount paid
+Balance due
+
+Invoice statuses:
+
+Draft
+Sent
+Viewed
+Partially Paid
+Paid
+Overdue
+Cancelled
+
+Actions:
+
+Preview
+Edit
+Duplicate
+Download PDF
+Print
+Send email
+Share link
+Copy payment link
+Record payment
+Pay invoice
+Cancel invoice
+QUOTATIONS
+
+Allow users to create professional quotations.
+
+Fields:
+
+Customer
+Quote number
+Date
+Valid until
+Items
+Quantity
+Unit price
+Discount
+Tax
+Notes
+Terms
+
+Statuses:
+
+Draft
+Sent
+Viewed
+Accepted
+Rejected
+Expired
+Converted
+
+Actions:
+
+Preview
+Edit
+Download PDF
+Send
+Share
+Duplicate
+Convert to invoice
+
+Important workflow:
+
+Quotation → Accepted → Convert to Invoice → Payment → Receipt
+
+RECEIPTS
+
+Receipts can be:
+
+Automatically generated after verified invoice payment.
+Created manually by the business.
+
+Receipt should contain:
+
+Receipt number
+Customer
+Invoice number
+Amount paid
+Payment method
+Payment reference
+Date
+Remaining balance
+Business information
+Digital signature
+
+Actions:
+
+Download PDF
+Print
+Email
+Share
+LETTERS
+
+Create a professional business letter system.
+
+Templates:
+
+Business Letter
+Introduction Letter
+Recommendation Letter
+Offer Letter
+Appointment Letter
+Employment Letter
+Request Letter
+Acknowledgement Letter
+Warning Letter
+Termination Letter
+Custom Letter
+
+Provide a rich text editor supporting:
+
+Bold
+Italic
+Underline
+Headings
+Lists
+Alignment
+Font size
+Tables
+Images
+Signature
+Letterhead
+Footer
+Page numbers
+
+Export:
+
+PDF
+DOCX
+
+Automatically apply company branding.
+
+DOCUMENT BRANDING
+
+Every generated document should use the company's settings.
+
+Support:
+
+Logo
+Brand colors
+Company information
+Letterhead
+Footer
+Watermark
+Digital signature
+Document template
+Invoice numbering
+
+Users should see a live preview before generating the final document.
+
+PDF/DOCUMENT GENERATION
+
+Generate professional PDF documents server-side.
+
+Every document must be:
+
+Printable
+A4 compatible
+Properly formatted
+Branded
+Downloadable
+Shareable
+
+Save generated files in Vercel Blob.
+
+Store document metadata in Neon.
+
+EMAIL SYSTEM
+
+Use Resend + React Email.
+
+Send emails automatically for:
+
+Account
+Welcome email
+Email verification
+Password reset
+Documents
+Invoice created
+Invoice sent
+Quotation created
+Quotation sent
+Quotation accepted
+Receipt generated
+Payment received
+Billing
+Payment successful
+Payment failed
+Subscription activated
+Subscription renewal
+Subscription expiring
+Subscription cancelled
+Payment reminders
+
+Support:
+
+Before due date
+Due today
+Overdue
+EMAIL RECIPIENTS
+
+When an invoice or quotation is created, send a notification to the business owner's registered email.
+
+Example:
+
+Invoice created:
+
+Business owner receives:
+
+Invoice PDF attachment.
+
+When the business chooses "Send to Customer", send the invoice to the customer's email.
+
+Customer email should contain:
+
+Business name
+Invoice number
+Amount
+Due date
+View Invoice button
+Pay Invoice button
+PDF attachment
+
+Do the same for quotations.
+
+Do not send emails for drafts unless the user explicitly chooses to send them.
+
+PAYSTACK
+
+Use Paystack for payments.
+
+There are two separate payment flows.
+
+SaaS subscription
+
+User:
+
+Select plan → Select weekly/monthly/yearly → Paystack Checkout → Payment → Webhook → Activate subscription.
+
+Invoice payment
+
+Customer:
+
+Open invoice → Pay Invoice → Paystack Checkout → Payment → Webhook → Verify payment → Mark invoice paid → Generate receipt → Send receipt email.
+
+Never trust the amount supplied by the frontend.
+
+The server must calculate/retrieve the amount from the database.
+
+PAYSTACK WEBHOOK
+
+Create:
+
+/api/webhooks/paystack
+
+Verify:
+
+Paystack webhook signature
+Transaction reference
+Transaction status
+Amount
+Currency
+Invoice
+Business
+Idempotency
+
+Never process the same payment twice.
+
+After successful invoice payment:
+
+Create payment record.
+Update invoice status.
+Update amount paid.
+Calculate remaining balance.
+Generate receipt.
+Store receipt PDF.
+Email business owner.
+Email customer.
+Add activity log.
+PARTIAL PAYMENTS
+
+Support partial payments.
+
+Example:
+
+Invoice:
+₦500,000
+
+Payment:
+₦200,000
+
+Remaining:
+₦300,000
+
+Status:
+
+PARTIALLY PAID
+
+Allow the business to enable/disable partial payments.
+
+PAYMENT LINK
+
+Each invoice should have a secure public payment URL.
+
+Example:
+
+/pay/
+
+The public page should display:
+
+Business logo
+Business name
+Invoice number
+Customer
+Amount
+Amount due
+Due date
+Invoice items
+Payment button
+
+Do not expose internal database IDs.
+
+SUBSCRIPTIONS
+
+Users must select a platform plan.
+
+Support:
+
+Weekly
+Monthly
+Yearly
+
+Plans should be managed from the admin panel.
+
+Each plan can have:
+
+Name
+Description
+Weekly price
+Monthly price
+Yearly price
+Invoice limit
+Customer limit
+Storage limit
+Feature restrictions
+Team member limit
+Status
+
+Subscription statuses:
+
+Trial
+Active
+Past Due
+Cancelled
+Expired
+HISTORY
+
+Create a unified history page.
+
+Categories:
+
+All
+Invoices
+Quotations
+Receipts
+Letters
+Payments
+
+Allow:
+
+Search
+Filter
+Date range
+Status filter
+Customer filter
+
+Show activity timeline for important documents.
+
+PWA
+
+Build InvoiceHub as a Progressive Web App.
+
+Support:
+
+Android installation
+iOS installation
+Desktop installation where supported
+Standalone mode
+App icon
+Splash screen
+Responsive mobile UI
+PWA manifest
+Service worker
+Offline caching for appropriate static/app-shell resources
+
+Create a branded install popup.
+
+Android
+
+Use the browser's install prompt when available.
+
+Button:
+
+"Install InvoiceHub"
+
+iOS
+
+Show instructions:
+
+Tap Share.
+Select Add to Home Screen.
+Enable Open as Web App where available.
+Tap Add.
+
+Do not repeatedly show the installation popup after dismissal.
+
+Add:
+
+Settings → Install InvoiceHub
+
+for users who want to install later.
+
+ADMIN SYSTEM
+
+Admin must have a completely separate route and layout.
+
+Admin URL:
+
+/admin/*
+
+Normal users:
+
+/app/*
+
+Never allow a normal user to access admin functionality.
+
+Use server-side authorization.
+
+Admin roles:
+
+Super Admin
+Finance Admin
+Support Admin
+Content Admin
+Technical Admin
+
+Implement role-based permissions.
+
+ADMIN DASHBOARD
+
+Display:
+
+Total users
+Total businesses
+Active subscriptions
+Trial users
+Monthly recurring revenue
+Annual recurring revenue
+Total platform revenue
+Total documents
+Successful payments
+Failed payments
+Refunds
+Recent activity
+
+Charts:
+
+Revenue
+User growth
+Subscription growth
+Document generation
+Payment activity
+ADMIN USERS
+
+Admin can:
+
+View users
+Search users
+Filter users
+View account
+View business
+View subscription
+View payment history
+Suspend user
+Activate user
+Change plan where authorized
+ADMIN BUSINESSES
+
+Show:
+
+Business name
+Owner
+Plan
+Status
+Created date
+Number of documents
+Revenue/payment statistics
+ADMIN PLANS
+
+Admin can:
+
+Create plan
+Edit plan
+Activate/deactivate plan
+Set prices
+Set limits
+Configure features
+ADMIN PAYMENTS
+
+Show:
+
+Transaction reference
+Business
+Customer
+Type
+Amount
+Gateway
+Status
+Date
+
+Types:
+
+Subscription
+Invoice
+
+Support refunds with appropriate permissions.
+
+ADMIN TEMPLATES
+
+Admin can create and manage global:
+
+Invoice templates
+Quotation templates
+Receipt templates
+Letter templates
+
+Templates can be:
+
+Free
+Premium
+Business plan only
+ADMIN EMAIL MANAGEMENT
+
+Admin dashboard should show:
+
+Emails sent
+Delivered
+Failed
+Bounced where available
+
+Manage email templates.
+
+ADMIN PAYMENT GATEWAYS
+
+Allow admin to configure gateway status.
+
+Paystack:
+
+Enabled/disabled
+Public key
+Secret key
+Webhook status
+Test/live environment
+
+Never expose secret keys to the frontend.
+
+ADMIN ACTIVITY LOGS
+
+Record sensitive administrative actions:
+
+Admin login
+User suspension
+User activation
+Plan changes
+Refunds
+Gateway changes
+Template changes
+Settings changes
+
+Store:
+
+Admin
+Action
+Target
+Timestamp
+IP where appropriate
+Metadata
+DATABASE
+
+Design a normalized PostgreSQL schema.
+
+Core tables:
+
+users
+businesses
+business_members
+customers
+
+plans
+subscriptions
+subscription_payments
+
+invoices
+invoice_items
+
+quotations
+quotation_items
+
+receipts
+receipt_items
+
+letters
+letter_templates
+
+payments
+refunds
+
+documents
+document_versions
+
+branding_settings
+watermark_settings
+signature_settings
+
+activity_logs
+notifications
+
+admin_roles
+permissions
+role_permissions
+user_roles
+
+Use foreign keys, indexes, timestamps and appropriate constraints.
+
+SECURITY
+
+Implement:
+
+Supabase authentication
+Server-side authorization
+Role-based access control
+Business ownership checks
+Admin permission checks
+Input validation with Zod
+SQL injection protection through ORM/parameterized queries
+CSRF protection where applicable
+Secure HTTP headers
+Rate limiting for sensitive endpoints
+Secure webhook verification
+Payment idempotency
+Secure file upload validation
+File size limits
+MIME type validation
+
+Never expose:
+
+Paystack secret key
+Database credentials
+Supabase service-role key
+Resend API key
+
+to the browser.
+
+MULTI-TENANCY
+
+Every business must have isolated data.
+
+A user can only access:
+
+Their own business
+Their business customers
+Their business invoices
+Their business quotations
+Their business receipts
+Their business letters
+Their business payments
+
+Never allow one business to access another business's records.
+
+Use business_id throughout the database and enforce authorization server-side.
+
+UI/UX
+
+Design a modern professional SaaS interface.
+
+Use:
+
+White/light interface
+Clean cards
+Responsive tables
+Mobile-friendly forms
+Modal dialogs
+Toast notifications
+Skeleton loading
+Empty states
+Error states
+Confirmation dialogs
+
+The user's selected company brand colors should be applied to their business workspace and generated documents.
+
+The admin panel should have its own neutral administrative theme.
+
+PERFORMANCE
+
+Optimize for Vercel.
+
+Use:
+
+Code splitting
+Lazy loading
+Optimized images
+Server-side operations for sensitive logic
+Efficient database queries
+Pagination
+Caching where appropriate
+Background processing for expensive PDF/email tasks where appropriate
+
+Do not load thousands of invoices or customers at once.
+
+MVP PRIORITY
+
+Build in this order:
+
+PHASE 1
+Authentication + company setup
+
+PHASE 2
+Branding + logo + colors + signature + watermark
+
+PHASE 3
+Customers
+
+PHASE 4
+Invoices
+
+PHASE 5
+Quotations
+
+PHASE 6
+Receipts
+
+PHASE 7
+Letters
+
+PHASE 8
+PDF/document generation
+
+PHASE 9
+Resend emails
+
+PHASE 10
+Paystack invoice payments
+
+PHASE 11
+Subscriptions
+
+PHASE 12
+Admin panel
+
+PHASE 13
+PWA
+
+PHASE 14
+Reports and advanced features
+
+IMPORTANT DEVELOPMENT RULES
+
+Do not create fake payment success.
+
+Do not mark an invoice as paid based only on frontend callback.
+
+Use Paystack webhook verification.
+
+Do not expose secrets.
+
+Do not mix admin and user routes.
+
+Do not allow cross-business data access.
+
+Do not send emails for drafts automatically.
+
+Do not hardcode business branding.
+
+Do not hardcode subscription prices in the frontend.
+
+All plan prices and limits must come from the database.
+
+All business documents must use the business's current branding settings.
+
+Build reusable components instead of duplicating invoice, quotation and receipt logic.
+
+Create clean TypeScript types.
+
+Use proper error handling.
+
+Use database transactions for financial operations.
+
+The final project must be deployable on Vercel using environment variables.
+
+2. InvoiceHub MVP
+
+The MVP should not try to build everything at once. The first release should prove the core business workflow.
+
+MVP user journey
+Register
+   ↓
+Verify Email
+   ↓
+Company Setup
+   ↓
+Choose Logo + Colors
+   ↓
+Add Signature
+   ↓
+Set Watermark
+   ↓
+Dashboard
+   ↓
+Add Customer
+   ↓
+Create Quotation
+   ↓
+Send Quotation
+   ↓
+Convert to Invoice
+   ↓
+Customer Pays with Paystack
+   ↓
+Payment Verified
+   ↓
+Receipt Generated
+   ↓
+Receipt Emailed
+MVP features
+Module	MVP
+Registration/Login	✅
+Email verification	✅
+Company setup	✅
+Logo	✅
+Custom colors	✅
+Watermark	✅
+Digital signature	✅
+Customers	✅
+Invoices	✅
+Quotations	✅
+Receipts	✅
+Letters	✅
+PDF generation	✅
+Resend email	✅
+Paystack	✅
+Payment links	✅
+Payment verification	✅
+Subscription	✅
+History	✅
+Admin panel	✅
+PWA	✅
+Advanced analytics	Later
+Team accounts	Later
+AI document generation	Later
+Cryptographic signing	Later
+White-label domains	Later
+MVP subscription plans
+
+A simple starting structure:
+
+STARTER
+- Invoices
+- Quotations
+- Receipts
+- Letters
+- Customers
+- PDF
+- Basic branding
+
+BUSINESS
+- Everything in Starter
+- Advanced branding
+- Watermarks
+- Digital signatures
+- Payment links
+- Recurring invoices
+- More documents
+
+PRO
+- Everything in Business
+- Team members
+- Advanced reports
+- Premium templates
+- API access
+- White-label features
+
+The actual prices should remain configurable from the admin panel.
+
+3. Product Requirements Document
+INVOICEHUB
+Product Requirements Document
+Product Name
+
+InvoiceHub
+
+Tagline
+
+Create. Send. Get Paid.
+
+Product Type
+
+Multi-tenant SaaS business document and billing platform.
+
+1. PRODUCT OVERVIEW
+
+InvoiceHub is a SaaS platform that enables businesses to create professional invoices, quotations, receipts and business letters.
+
+Businesses can customize their documents using their own logo, colors, letterhead, watermark and digital signature.
+
+The platform also provides customer management, payment collection through Paystack, automated receipts, email delivery through Resend, subscription billing and document history.
+
+InvoiceHub is designed as a responsive Progressive Web App that can be installed on Android and iOS devices.
+
+2. PROBLEM
+
+Many small businesses create invoices and quotations manually using Word, Excel, Canva or generic templates.
+
+This creates several problems:
+
+Inconsistent branding
+Manual calculations
+Poor document organization
+Difficult payment tracking
+No centralized customer history
+Manual receipt generation
+Difficult document delivery
+No professional digital workflow
+Limited mobile experience
+
+InvoiceHub solves these problems in one platform.
+
+3. TARGET USERS
+
+Primary users:
+
+Freelancers
+Small businesses
+Agencies
+Consultants
+Digital service providers
+Contractors
+Retail businesses
+Professional service businesses
+SMEs
+Nigerian businesses initially
+4. CORE VALUE PROPOSITION
+
+InvoiceHub allows businesses to:
+
+Create professional documents.
+Brand documents with their own identity.
+Send documents by email.
+Collect payments.
+Automatically generate receipts.
+Track document and payment history.
+Manage customers.
+Access everything from a mobile-friendly PWA.
+5. USER ROLES
+Business Owner
+
+Can:
+
+Manage business
+Manage customers
+Create documents
+Receive payments
+Manage subscription
+Customize branding
+Business Staff
+
+Future feature.
+
+Can receive restricted permissions from the business owner.
+
+Platform Admin
+
+Separate administrative role.
+
+Uses:
+
+/admin/*
+
+Has access to platform management tools according to permissions.
+
+6. AUTHENTICATION REQUIREMENTS
+
+Users must be able to:
+
+Register
+Login
+Logout
+Verify email
+Reset password
+Change password
+Manage profile
+
+After registration, send a welcome/verification email.
+
+7. COMPANY SETUP
+
+The setup wizard must collect:
+
+Business name
+Business type
+Address
+Phone
+Email
+Website
+Registration number
+Tax ID
+Currency
+Logo
+Brand colors
+Signature
+Watermark
+Default document template
+
+The user must be able to modify all settings later.
+
+8. BRANDING
+
+Businesses can configure:
+
+Primary color
+Secondary color
+Accent color
+Background
+Text color
+Logo
+Favicon
+Font
+Watermark
+Letterhead
+Signature
+
+Provide live previews.
+
+9. DIGITAL SIGNATURE
+
+The system supports:
+
+Typed signature
+
+The user enters their name and chooses a signature style.
+
+Uploaded signature
+
+The user uploads a handwritten signature.
+
+The system processes the uploaded image to:
+
+Remove background
+Remove noise
+Improve contrast
+Crop the signature
+Produce transparent PNG
+
+The signature can be used on:
+
+Invoices
+Quotations
+Receipts
+Letters
+10. INVOICE REQUIREMENTS
+
+Users can create invoices with:
+
+Unique invoice number
+Customer
+Issue date
+Due date
+Line items
+Quantity
+Price
+Discount
+Tax
+Notes
+Terms
+Payment information
+
+Invoice statuses:
+
+Draft
+Sent
+Viewed
+Partially Paid
+Paid
+Overdue
+Cancelled
+11. QUOTATION REQUIREMENTS
+
+Users can create quotations with:
+
+Quote number
+Customer
+Date
+Validity date
+Items
+Discount
+Tax
+Notes
+Terms
+
+Statuses:
+
+Draft
+Sent
+Viewed
+Accepted
+Rejected
+Expired
+Converted
+
+Quotations can be converted into invoices.
+
+12. RECEIPT REQUIREMENTS
+
+Receipts are generated after verified payments.
+
+Receipt contains:
+
+Receipt number
+Invoice number
+Customer
+Amount
+Payment method
+Payment reference
+Date
+Balance
+Signature
+Company branding
+13. LETTER REQUIREMENTS
+
+Businesses can create:
+
+Business letters
+Recommendation letters
+Offer letters
+Employment letters
+Introduction letters
+Appointment letters
+Request letters
+Custom letters
+
+Letters support rich editing and company letterhead.
+
+Export formats:
+
+PDF
+DOCX
+14. CUSTOMER MANAGEMENT
+
+Customer records include:
+
+Name
+Company
+Email
+Phone
+Address
+Tax ID
+Notes
+
+Customer profile should display:
+
+Invoices
+Quotations
+Receipts
+Payments
+Outstanding balance
+Document history
+15. PAYMENTS
+
+Paystack is the initial payment gateway.
+
+Payment use cases:
+
+SaaS billing
+
+Users pay InvoiceHub subscriptions.
+
+Invoice payments
+
+Customers pay business invoices.
+
+The two flows must be stored separately.
+
+16. PAYMENT VERIFICATION
+
+Payment must only be considered successful after server-side verification.
+
+The frontend callback alone must never mark an invoice as paid.
+
+Paystack webhook must:
+
+Verify signature
+Verify transaction
+Verify amount
+Verify reference
+Prevent duplicate processing
+Update payment
+Update invoice
+Generate receipt
+17. PARTIAL PAYMENTS
+
+Support:
+
+Full payment
+Partial payment
+
+Invoice should calculate:
+
+Total
+
+Amount paid
+= Balance due
+18. EMAIL SYSTEM
+
+Resend is the email provider.
+
+Automated emails:
+
+Welcome
+Email verification
+Invoice created
+Invoice sent
+Quotation created
+Quotation sent
+Quotation accepted
+Payment received
+Receipt generated
+Payment reminder
+Invoice overdue
+Subscription activated
+Subscription renewal
+Payment failed
+Subscription cancelled
+
+PDF documents should be attached when appropriate.
+
+19. DOCUMENT DELIVERY
+
+Users can:
+
+Download
+Print
+Email
+Share link
+
+Customers can open secure public document/payment links without accessing the business dashboard.
+
+20. HISTORY
+
+History must contain:
+
+Invoices
+Quotations
+Receipts
+Letters
+Payments
+
+Provide:
+
+Search
+Filtering
+Date ranges
+Status filters
+Customer filters
+
+Maintain activity timelines for important documents.
+
+21. SUBSCRIPTIONS
+
+Users can choose:
+
+Weekly
+Monthly
+Yearly
+
+Plans are controlled by administrators.
+
+Plan restrictions can include:
+
+Number of invoices
+Number of customers
+Storage
+Templates
+Branding features
+Team members
+API access
+22. PWA
+
+InvoiceHub must be installable as a PWA.
+
+Requirements:
+
+Web manifest
+Service worker
+App icons
+Standalone mode
+Responsive interface
+Install prompt
+Android installation
+iOS installation instructions
+Install option in settings
+
+The install popup should not repeatedly annoy users after dismissal.
+
+23. ADMIN PANEL
+
+Admin uses:
+
+/admin/*
+
+Normal users use:
+
+/app/*
+
+Admin has separate:
+
+Layout
+Sidebar
+Authentication checks
+Middleware
+Permissions
+API endpoints
+
+Admin modules:
+
+Dashboard
+Users
+Businesses
+Plans
+Subscriptions
+Payments
+Refunds
+Documents
+Templates
+Emails
+Payment gateways
+Reports
+Admins
+Roles
+Activity logs
+System settings
+24. ADMIN DASHBOARD METRICS
+
+Show:
+
+Total users
+Total businesses
+Active subscriptions
+Trial users
+Monthly recurring revenue
+Annual recurring revenue
+Platform revenue
+Documents generated
+Successful payments
+Failed payments
+Refunds
+25. DATABASE
+
+Core entities:
+
+User
+Business
+BusinessMember
+Customer
+
+Plan
+Subscription
+SubscriptionPayment
+
+Invoice
+InvoiceItem
+
+Quotation
+QuotationItem
+
+Receipt
+ReceiptItem
+
+Letter
+LetterTemplate
+
+Payment
+Refund
+
+Document
+DocumentVersion
+
+BrandingSettings
+WatermarkSettings
+SignatureSettings
+
+ActivityLog
+Notification
+
+Role
+Permission
+RolePermission
+UserRole
+
+All business-owned records must include business ownership relationships.
+
+26. MULTI-TENANCY
+
+Business data must be isolated.
+
+A business owner cannot access another business's:
+
+Customers
+Invoices
+Quotations
+Receipts
+Letters
+Payments
+Files
+
+Authorization must be enforced server-side.
+
+27. SECURITY
+
+Required:
+
+Authentication
+Authorization
+RBAC
+Secure API routes
+Input validation
+Rate limiting
+Secure file uploads
+Webhook verification
+Payment idempotency
+Secret management
+Database constraints
+Audit logs
+28. NON-FUNCTIONAL REQUIREMENTS
+
+The platform should be:
+
+Fast
+Mobile responsive
+Accessible
+Secure
+Scalable
+SEO-friendly for public pages
+Vercel-compatible
+PWA-compatible
+29. SUCCESS METRICS
+
+Track:
+
+Registered users
+Activated businesses
+Subscription conversion
+Monthly recurring revenue
+Invoice creation
+Quotation creation
+Payment conversion
+Successful invoice payments
+Customer retention
+Document generation
+Email delivery rate
+30. FUTURE FEATURES
+
+After MVP:
+
+AI invoice creation
+AI letter generation
+AI quotation generation
+Team accounts
+Staff permissions
+Recurring invoices
+Expense tracking
+Advanced reports
+Accounting integrations
+WhatsApp delivery
+Multiple payment gateways
+Multi-currency
+Customer portal
+API
+Webhooks
+White-label domains
+Custom document designer
+Cryptographic digital signatures
+Mobile applications

@@ -1,0 +1,101 @@
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+
+// Auth
+import { AuthProvider } from './contexts/AuthContext';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+
+// Pages - Auth
+import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
+import VerifyEmail from './pages/auth/VerifyEmail';
+
+// Pages - Setup
+import CompanySetupWizard from './pages/setup/CompanySetupWizard';
+
+// Pages - App
+import AppLayout from './layouts/AppLayout';
+import Dashboard from './pages/app/Dashboard';
+import InvoiceList from './pages/app/invoices/InvoiceList';
+import InvoiceForm from './pages/app/invoices/InvoiceForm';
+import InvoiceDetail from './pages/app/invoices/InvoiceDetail';
+import QuotationList from './pages/app/quotations/QuotationList';
+import QuotationForm from './pages/app/quotations/QuotationForm';
+import QuotationDetail from './pages/app/quotations/QuotationDetail';
+import ReceiptList from './pages/app/receipts/ReceiptList';
+import ReceiptForm from './pages/app/receipts/ReceiptForm';
+import ReceiptDetail from './pages/app/receipts/ReceiptDetail';
+import LetterList from './pages/app/letters/LetterList';
+import LetterForm from './pages/app/letters/LetterForm';
+import LetterDetail from './pages/app/letters/LetterDetail';
+import CustomerList from './pages/app/customers/CustomerList';
+import CustomerForm from './pages/app/customers/CustomerForm';
+import SettingsPage from './pages/app/settings/SettingsPage';
+import PaymentList from './pages/app/payments/PaymentList';
+import PaymentForm from './pages/app/payments/PaymentForm';
+import HistoryPage from './pages/app/history/HistoryPage';
+
+import './App.css';
+
+const queryClient = new QueryClient();
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<Navigate to="/app/dashboard" replace />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/verify-email" element={<VerifyEmail />} />
+
+            {/* Setup route (auth required) */}
+            <Route element={<ProtectedRoute />}>
+              <Route path="/setup" element={<CompanySetupWizard />} />
+            </Route>
+
+            {/* Protected app routes */}
+            <Route element={<ProtectedRoute />}>
+              <Route element={<AppLayout />}>
+                <Route path="/app/dashboard" element={<Dashboard />} />
+                {/* Placeholder routes — filled in later phases */}
+                <Route path="/app/invoices" element={<InvoiceList />} />
+                <Route path="/app/invoices/new" element={<InvoiceForm />} />
+                <Route path="/app/invoices/:id" element={<InvoiceDetail />} />
+                <Route path="/app/invoices/:id/edit" element={<InvoiceForm />} />
+                <Route path="/app/quotations" element={<QuotationList />} />
+                <Route path="/app/quotations/new" element={<QuotationForm />} />
+                <Route path="/app/quotations/:id" element={<QuotationDetail />} />
+                <Route path="/app/quotations/:id/edit" element={<QuotationForm />} />
+                <Route path="/app/receipts" element={<ReceiptList />} />
+                <Route path="/app/receipts/new" element={<ReceiptForm />} />
+                <Route path="/app/receipts/:id" element={<ReceiptDetail />} />
+                <Route path="/app/receipts/:id/edit" element={<ReceiptForm />} />
+                <Route path="/app/letters" element={<LetterList />} />
+                <Route path="/app/letters/new" element={<LetterForm />} />
+                <Route path="/app/letters/:id" element={<LetterDetail />} />
+                <Route path="/app/letters/:id/edit" element={<LetterForm />} />
+                <Route path="/app/customers" element={<CustomerList />} />
+                <Route path="/app/customers/new" element={<CustomerForm />} />
+                <Route path="/app/customers/:id/edit" element={<CustomerForm />} />
+                <Route path="/app/payments" element={<PaymentList />} />
+                <Route path="/app/payments/new" element={<PaymentForm />} />
+                <Route path="/app/history" element={<HistoryPage />} />
+                <Route path="/app/settings" element={<SettingsPage />} />
+              </Route>
+            </Route>
+
+            {/* Fallback */}
+            <Route path="*" element={<Navigate to="/app/dashboard" replace />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
+  );
+}
+
+export default App;
