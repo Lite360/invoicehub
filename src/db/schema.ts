@@ -236,3 +236,49 @@ export const payments = pgTable("payments", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+// --- Admin Roles ---
+export const roles = pgTable("roles", {
+  id: text("id").primaryKey(), // "super_admin", "finance_admin", etc
+  name: text("name").notNull(),
+  description: text("description"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const userRoles = pgTable("user_roles", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").references(() => users.id).notNull(),
+  roleId: text("role_id").references(() => roles.id).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// --- Subscriptions and Plans ---
+export const plans = pgTable("plans", {
+  id: text("id").primaryKey(), // "free", "starter", "pro", "business"
+  name: text("name").notNull(),
+  description: text("description"),
+  weeklyPrice: numeric("weekly_price", { precision: 12, scale: 2 }).default("0").notNull(),
+  monthlyPrice: numeric("monthly_price", { precision: 12, scale: 2 }).default("0").notNull(),
+  yearlyPrice: numeric("yearly_price", { precision: 12, scale: 2 }).default("0").notNull(),
+  invoiceLimit: integer("invoice_limit"), // null for unlimited
+  customerLimit: integer("customer_limit"), 
+  teamMemberLimit: integer("team_member_limit").default(1),
+  features: text("features"), // JSON string or comma separated
+  status: text("status").default("active").notNull(), // active, archived
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const subscriptions = pgTable("subscriptions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  businessId: uuid("business_id").references(() => businesses.id).notNull().unique(),
+  planId: text("plan_id").references(() => plans.id).notNull(),
+  status: text("status").default("active").notNull(), // trial, active, past_due, cancelled, expired
+  billingCycle: text("billing_cycle").default("monthly").notNull(), // weekly, monthly, yearly
+  currentPeriodStart: timestamp("current_period_start").notNull(),
+  currentPeriodEnd: timestamp("current_period_end").notNull(),
+  cancelAtPeriodEnd: boolean("cancel_at_period_end").default(false),
+  paystackSubscriptionCode: text("paystack_subscription_code"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});

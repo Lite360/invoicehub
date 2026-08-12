@@ -7,9 +7,9 @@ import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 
 // Pages - Auth
-import Login from './pages/auth/Login';
-import Register from './pages/auth/Register';
+import AuthPage from './pages/auth/AuthPage';
 import VerifyEmail from './pages/auth/VerifyEmail';
+import Pricing from './pages/public/Pricing';
 
 // Pages - Setup
 import CompanySetupWizard from './pages/setup/CompanySetupWizard';
@@ -35,6 +35,11 @@ import SettingsPage from './pages/app/settings/SettingsPage';
 import PaymentList from './pages/app/payments/PaymentList';
 import PaymentForm from './pages/app/payments/PaymentForm';
 import HistoryPage from './pages/app/history/HistoryPage';
+import SubscriptionPage from './pages/app/subscription/SubscriptionPage';
+
+// Admin
+import AdminLayout from './layouts/AdminLayout';
+import AdminDashboard from './pages/admin/AdminDashboard';
 
 import './App.css';
 
@@ -48,9 +53,11 @@ function App() {
           <Routes>
             {/* Public routes */}
             <Route path="/" element={<Navigate to="/app/dashboard" replace />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<AuthPage />} />
+            <Route path="/register" element={<AuthPage />} />
+            <Route path="/auth" element={<AuthPage />} />
             <Route path="/verify-email" element={<VerifyEmail />} />
+            <Route path="/pricing" element={<Pricing />} />
 
             {/* Setup route (auth required) */}
             <Route element={<ProtectedRoute />}>
@@ -84,7 +91,20 @@ function App() {
                 <Route path="/app/payments" element={<PaymentList />} />
                 <Route path="/app/payments/new" element={<PaymentForm />} />
                 <Route path="/app/history" element={<HistoryPage />} />
+                <Route path="/app/subscription" element={<SubscriptionPage />} />
                 <Route path="/app/settings" element={<SettingsPage />} />
+              </Route>
+            </Route>
+
+            {/* Admin routes */}
+            <Route element={<ProtectedRoute />}>
+              <Route element={<AdminLayout />}>
+                <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                {/* Fallbacks for unbuilt admin pages */}
+                <Route path="/admin/users" element={<AdminDashboard />} />
+                <Route path="/admin/businesses" element={<AdminDashboard />} />
+                <Route path="/admin/plans" element={<AdminDashboard />} />
+                <Route path="/admin/settings" element={<AdminDashboard />} />
               </Route>
             </Route>
 
