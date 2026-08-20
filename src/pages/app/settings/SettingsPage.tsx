@@ -113,7 +113,7 @@ export default function SettingsPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent" />
+        <div className="animate-spin rounded-full h-8 w-8 border-4 border-emerald-600 border-t-transparent" />
       </div>
     );
   }
@@ -170,7 +170,7 @@ export default function SettingsPage() {
               <Button
                 onClick={saveProfile}
                 disabled={saveMutation.isPending}
-                className="bg-blue-600 hover:bg-blue-700"
+                className="bg-emerald-600 hover:bg-emerald-700"
               >
                 {saveMutation.isPending ? 'Saving...' : 'Save Profile'}
               </Button>
@@ -211,7 +211,7 @@ export default function SettingsPage() {
                   value={bizAddress}
                   onChange={(e) => setBizAddress(e.target.value)}
                   rows={2}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
               <div className="space-y-2">
@@ -235,7 +235,7 @@ export default function SettingsPage() {
               <Button
                 onClick={saveBusiness}
                 disabled={saveMutation.isPending}
-                className="bg-blue-600 hover:bg-blue-700"
+                className="bg-emerald-600 hover:bg-emerald-700"
               >
                 {saveMutation.isPending ? 'Saving...' : 'Save Company Info'}
               </Button>
@@ -310,7 +310,7 @@ export default function SettingsPage() {
               <Button
                 onClick={saveBranding}
                 disabled={saveMutation.isPending}
-                className="bg-blue-600 hover:bg-blue-700"
+                className="bg-emerald-600 hover:bg-emerald-700"
               >
                 {saveMutation.isPending ? 'Saving...' : 'Save Branding'}
               </Button>

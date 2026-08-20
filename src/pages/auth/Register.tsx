@@ -65,7 +65,7 @@ export default function Register() {
               {loading ? 'Creating account...' : 'Create account'}
             </Button>
             <div className="text-sm text-center text-gray-500">
-              Already have an account? <Link to="/login" className="text-blue-600 hover:underline">Sign in</Link>
+              Already have an account? <Link to="/login" className="text-emerald-600 hover:underline">Sign in</Link>
             </div>
           </CardFooter>
         </form>

@@ -9,7 +9,7 @@ type LetterStatus = 'draft' | 'sent';
 
 const STATUS_STYLES: Record<LetterStatus, string> = {
   draft: 'bg-gray-100 text-gray-600',
-  sent:  'bg-blue-100 text-blue-700',
+  sent:  'bg-emerald-100 text-emerald-700',
 };
 
 export default function LetterDetail() {
@@ -112,7 +112,7 @@ export default function LetterDetail() {
           {letter.status === 'draft' && (
             <Button
               variant="outline"
-              className="text-blue-700 border-blue-300 hover:bg-blue-50"
+              className="text-emerald-700 border-emerald-300 hover:bg-emerald-50"
               onClick={() => updateStatus.mutate('sent')}
               disabled={updateStatus.isPending}
             >

@@ -55,7 +55,7 @@ export default function Login() {
               {loading ? 'Signing in...' : 'Sign in'}
             </Button>
             <div className="text-sm text-center text-gray-500">
-              Don't have an account? <Link to="/register" className="text-blue-600 hover:underline">Register here</Link>
+              Don't have an account? <Link to="/register" className="text-emerald-600 hover:underline">Register here</Link>
             </div>
           </CardFooter>
         </form>

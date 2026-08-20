@@ -12,7 +12,7 @@ export default function PWAInstallBanner() {
     <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:w-80 z-50 animate-in slide-in-from-bottom-4 duration-300">
       <div className="bg-slate-900 text-white rounded-2xl shadow-2xl p-4 border border-slate-700">
         <div className="flex items-start gap-3">
-          <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center text-2xl flex-shrink-0">
+          <div className="w-12 h-12 rounded-xl bg-emerald-600 flex items-center justify-center text-2xl flex-shrink-0">
             📱
           </div>
           <div className="flex-1 min-w-0">
@@ -40,7 +40,7 @@ export default function PWAInstallBanner() {
         {!isIOS && isInstallable && (
           <button
             onClick={install}
-            className="mt-3 w-full py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl transition-colors"
+            className="mt-3 w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-xl transition-colors"
           >
             Install InvoiceHub
           </button>
@@ -49,9 +49,9 @@ export default function PWAInstallBanner() {
         {isIOS && (
           <div className="mt-3 flex items-center gap-2 text-xs text-slate-400 bg-slate-800 rounded-xl p-3">
             <span>1. Tap</span>
-            <span className="text-blue-400 font-medium">Share ↑</span>
+            <span className="text-emerald-400 font-medium">Share ↑</span>
             <span>2. Select</span>
-            <span className="text-blue-400 font-medium">Add to Home Screen</span>
+            <span className="text-emerald-400 font-medium">Add to Home Screen</span>
           </div>
         )}
       </div>

@@ -35,7 +35,7 @@ export default function StepTemplate({ data, updateData, brandColors, logoUrl }:
             onClick={() => updateData(template.id)}
             className={`cursor-pointer rounded-lg border-2 transition-all hover:shadow-md ${
               data === template.id
-                ? 'border-blue-600 ring-2 ring-blue-200'
+                ? 'border-emerald-600 ring-2 ring-emerald-200'
                 : 'border-gray-200 hover:border-gray-400'
             }`}
           >
@@ -87,7 +87,7 @@ export default function StepTemplate({ data, updateData, brandColors, logoUrl }:
                   <p className="text-xs text-gray-500">{template.description}</p>
                 </div>
                 {data === template.id && (
-                  <span className="text-blue-600 text-xs font-medium">✓ Selected</span>
+                  <span className="text-emerald-600 text-xs font-medium">✓ Selected</span>
                 )}
               </div>
             </div>

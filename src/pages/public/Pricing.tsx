@@ -27,7 +27,7 @@ export default function Pricing() {
     <div className="min-h-screen bg-slate-50 flex flex-col">
       <header className="p-6 flex justify-between items-center max-w-6xl mx-auto w-full">
         <Link to="/" className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-          <span className="text-blue-600">📄</span> InvoiceHub
+          <span className="text-emerald-600">📄</span> InvoiceHub
         </Link>
         <div className="space-x-4">
           <Link to="/login" className="text-slate-600 hover:text-slate-900 font-medium">Log in</Link>

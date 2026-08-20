@@ -3,8 +3,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 
 const QUICK_ACTIONS = [
-  { label: 'New Invoice', to: '/app/invoices/new', icon: '🧾', color: 'bg-blue-600 hover:bg-blue-700' },
-  { label: 'New Quotation', to: '/app/quotations/new', icon: '📋', color: 'bg-indigo-600 hover:bg-indigo-700' },
+  { label: 'New Invoice', to: '/app/invoices/new', icon: '🧾', color: 'bg-emerald-600 hover:bg-emerald-700' },
+  { label: 'New Quotation', to: '/app/quotations/new', icon: '📋', color: 'bg-emerald-700 hover:bg-emerald-800' },
   { label: 'New Receipt', to: '/app/receipts/new', icon: '🧮', color: 'bg-emerald-600 hover:bg-emerald-700' },
   { label: 'Add Customer', to: '/app/customers/new', icon: '👥', color: 'bg-orange-600 hover:bg-orange-700' },
 ];
@@ -28,7 +28,7 @@ export default function Dashboard() {
   });
 
   const STATS = [
-    { label: 'Total Invoices', value: data?.stats?.totalInvoices ?? 0, icon: '🧾', color: 'bg-blue-50 text-blue-700' },
+    { label: 'Total Invoices', value: data?.stats?.totalInvoices ?? 0, icon: '🧾', color: 'bg-emerald-50 text-emerald-700' },
     { label: 'Paid Invoices', value: data?.stats?.paidCount ?? 0, icon: '✅', color: 'bg-green-50 text-green-700' },
     { 
       label: 'Pending Payments', 
@@ -42,11 +42,11 @@ export default function Dashboard() {
   return (
     <div className="space-y-8 max-w-6xl">
       {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-slate-900 to-blue-900 rounded-2xl p-8 text-white flex items-center justify-between">
+      <div className="bg-gradient-to-r from-slate-900 to-emerald-900 rounded-2xl p-8 text-white flex items-center justify-between">
         <div>
-          <p className="text-blue-200 text-sm mb-1">{greeting} 👋</p>
+          <p className="text-emerald-200 text-sm mb-1">{greeting} 👋</p>
           <h1 className="text-3xl font-bold mb-2">{firstName}!</h1>
-          <p className="text-blue-200 text-sm">Here's an overview of your business activity.</p>
+          <p className="text-emerald-200 text-sm">Here's an overview of your business activity.</p>
         </div>
         <div className="hidden md:block text-7xl opacity-20 select-none">📊</div>
       </div>
@@ -96,7 +96,7 @@ export default function Dashboard() {
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
           {isLoading ? (
              <div className="flex items-center justify-center py-16">
-               <div className="animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent" />
+               <div className="animate-spin rounded-full h-8 w-8 border-4 border-emerald-600 border-t-transparent" />
              </div>
           ) : data?.recentActivity?.length > 0 ? (
             <div className="divide-y divide-gray-50">
@@ -126,7 +126,7 @@ export default function Dashboard() {
               <p className="text-sm text-gray-400 mt-1">Create your first invoice to get started!</p>
               <Link
                 to="/app/invoices/new"
-                className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+                className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors"
               >
                 🧾 Create Invoice
               </Link>

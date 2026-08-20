@@ -20,7 +20,7 @@ export default function AdminLayout() {
       <div className="w-64 bg-slate-900 text-white flex flex-col fixed inset-y-0 z-10">
         <div className="p-6">
           <Link to="/admin/dashboard" className="text-xl font-bold flex items-center gap-2">
-            <span className="text-blue-500">🛡️</span> Admin Panel
+            <span className="text-emerald-500">🛡️</span> Admin Panel
           </Link>
         </div>
         
@@ -33,7 +33,7 @@ export default function AdminLayout() {
                 to={item.href}
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                   isActive 
-                    ? 'bg-blue-600 text-white font-medium' 
+                    ? 'bg-emerald-600 text-white font-medium' 
                     : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                 }`}
               >

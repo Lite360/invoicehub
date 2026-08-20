@@ -7,7 +7,7 @@ type InvoiceStatus = 'draft' | 'sent' | 'paid' | 'overdue' | 'cancelled';
 
 const STATUS_STYLES: Record<InvoiceStatus, string> = {
   draft:     'bg-gray-100 text-gray-600',
-  sent:      'bg-blue-100 text-blue-700',
+  sent:      'bg-emerald-100 text-emerald-700',
   paid:      'bg-green-100 text-green-700',
   overdue:   'bg-red-100 text-red-700',
   cancelled: 'bg-zinc-100 text-zinc-500',
@@ -50,7 +50,7 @@ export default function InvoiceList() {
         </div>
         <Link
           to="/app/invoices/new"
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm"
         >
           + New Invoice
         </Link>
@@ -63,12 +63,12 @@ export default function InvoiceList() {
           placeholder="Search by client or invoice #..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 px-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 px-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
         />
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="px-4 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="px-4 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
         >
           <option value="all">All Statuses</option>
           <option value="draft">Draft</option>
@@ -83,7 +83,7 @@ export default function InvoiceList() {
       <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent" />
+            <div className="animate-spin rounded-full h-8 w-8 border-4 border-emerald-600 border-t-transparent" />
           </div>
         ) : isError ? (
           <div className="py-20 text-center text-red-500">Failed to load invoices.</div>
@@ -94,7 +94,7 @@ export default function InvoiceList() {
             <p className="text-sm text-gray-400 mt-1">Create your first invoice to get started</p>
             <Link
               to="/app/invoices/new"
-              className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+              className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors"
             >
               + New Invoice
             </Link>
@@ -116,7 +116,7 @@ export default function InvoiceList() {
               <tbody className="divide-y divide-gray-50">
                 {filtered.map((inv: any) => (
                   <tr key={inv.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 font-mono font-medium text-blue-600">
+                    <td className="px-6 py-4 font-mono font-medium text-emerald-600">
                       <Link to={`/app/invoices/${inv.id}`} className="hover:underline">
                         {inv.invoiceNumber}
                       </Link>
@@ -142,7 +142,7 @@ export default function InvoiceList() {
                         </Link>
                         <Link
                           to={`/app/invoices/${inv.id}`}
-                          className="px-3 py-1.5 text-xs bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                          className="px-3 py-1.5 text-xs bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition-colors"
                         >
                           View
                         </Link>

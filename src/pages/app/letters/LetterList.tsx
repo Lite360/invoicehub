@@ -7,7 +7,7 @@ type LetterStatus = 'draft' | 'sent';
 
 const STATUS_STYLES: Record<LetterStatus, string> = {
   draft: 'bg-gray-100 text-gray-600',
-  sent:  'bg-blue-100 text-blue-700',
+  sent:  'bg-emerald-100 text-emerald-700',
 };
 
 async function fetchLetters(token: string) {

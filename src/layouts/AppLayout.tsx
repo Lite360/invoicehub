@@ -30,7 +30,7 @@ export default function AppLayout() {
       <aside className={`${sidebarOpen ? 'w-64' : 'w-16'} flex-shrink-0 bg-slate-900 text-white flex flex-col transition-all duration-300 ease-in-out`}>
         {/* Logo */}
         <div className="flex items-center gap-3 px-5 py-5 border-b border-slate-700">
-          <div className="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center font-bold text-sm flex-shrink-0">IH</div>
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center font-bold text-sm flex-shrink-0">IH</div>
           {sidebarOpen && (
             <div>
               <p className="font-bold text-sm leading-tight">InvoiceHub</p>
@@ -48,7 +48,7 @@ export default function AppLayout() {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
                   isActive
-                    ? 'bg-blue-600 text-white font-medium'
+                    ? 'bg-emerald-600 text-white font-medium'
                     : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                 }`
               }
@@ -68,7 +68,7 @@ export default function AppLayout() {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
                   isActive
-                    ? 'bg-blue-600 text-white font-medium'
+                    ? 'bg-emerald-600 text-white font-medium'
                     : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                 }`
               }
@@ -91,7 +91,7 @@ export default function AppLayout() {
           {!isInstalled && !dismissed && (isInstallable || isIOS) && sidebarOpen && (
             <button
               onClick={isInstallable ? install : undefined}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-blue-300 hover:bg-blue-600 hover:text-white transition-colors"
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-emerald-300 hover:bg-emerald-600 hover:text-white transition-colors"
             >
               <span className="text-base flex-shrink-0">📲</span>
               <span>Install App</span>
@@ -126,7 +126,7 @@ export default function AppLayout() {
 
             {/* User Avatar */}
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-semibold">
+              <div className="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center text-white text-sm font-semibold">
                 {user?.email?.charAt(0).toUpperCase() ?? 'U'}
               </div>
               <div className="hidden md:block">

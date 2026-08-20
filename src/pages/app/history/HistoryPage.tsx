@@ -6,8 +6,8 @@ import { useAuth } from '@/contexts/AuthContext';
 type HistoryType = 'all' | 'invoice' | 'quotation' | 'receipt' | 'letter' | 'payment';
 
 const TYPE_CONFIG: Record<string, { icon: string; label: string; color: string }> = {
-  invoice:   { icon: '🧾', label: 'Invoice',   color: 'bg-blue-100 text-blue-700'    },
-  quotation: { icon: '📋', label: 'Quotation', color: 'bg-indigo-100 text-indigo-700' },
+  invoice:   { icon: '🧾', label: 'Invoice',   color: 'bg-emerald-100 text-emerald-700'    },
+  quotation: { icon: '📋', label: 'Quotation', color: 'bg-emerald-100 text-emerald-700' },
   receipt:   { icon: '💵', label: 'Receipt',   color: 'bg-emerald-100 text-emerald-700' },
   letter:    { icon: '✉️', label: 'Letter',    color: 'bg-gray-100 text-gray-700'    },
   payment:   { icon: '💰', label: 'Payment',   color: 'bg-violet-100 text-violet-700' },
@@ -15,7 +15,7 @@ const TYPE_CONFIG: Record<string, { icon: string; label: string; color: string }
 
 const STATUS_COLOR: Record<string, string> = {
   draft:      'bg-gray-100 text-gray-500',
-  sent:       'bg-blue-100 text-blue-700',
+  sent:       'bg-emerald-100 text-emerald-700',
   paid:       'bg-green-100 text-green-700',
   overdue:    'bg-red-100 text-red-700',
   cancelled:  'bg-zinc-100 text-zinc-500',
@@ -92,21 +92,21 @@ export default function HistoryPage() {
           placeholder="Search by title or client..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 px-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 px-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
         />
         <div className="flex gap-2 items-center">
           <input
             type="date"
             value={dateFrom}
             onChange={(e) => setDateFrom(e.target.value)}
-            className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
           />
           <span className="text-gray-400 text-sm">to</span>
           <input
             type="date"
             value={dateTo}
             onChange={(e) => setDateTo(e.target.value)}
-            className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
           />
           {(dateFrom || dateTo) && (
             <button
@@ -139,7 +139,7 @@ export default function HistoryPage() {
       {/* Content */}
       {isLoading ? (
         <div className="flex items-center justify-center py-20">
-          <div className="animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent" />
+          <div className="animate-spin rounded-full h-8 w-8 border-4 border-emerald-600 border-t-transparent" />
         </div>
       ) : filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 bg-white rounded-xl border border-gray-100 shadow-sm text-center">
