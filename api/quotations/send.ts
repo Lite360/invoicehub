@@ -44,7 +44,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       from: 'InvoiceHub <billing@invoicehub.com>',
       to: [quotation.clientEmail],
       subject: `Quotation ${quotation.quotationNumber} from ${business.name}`,
-      html: render(QuotationEmail({ quotation, business })),
+      html: await render(QuotationEmail({ quotation, business })),
     });
 
     if (quotation.status === 'draft') {

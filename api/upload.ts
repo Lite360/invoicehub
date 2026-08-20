@@ -1,6 +1,6 @@
 import { handleUpload, type HandleUploadBody } from '@vercel/blob/client';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { supabase } from '../../src/lib/supabase'; // We'll need a backend client for token auth if we restrict
+import { supabase } from '../src/lib/supabase'; // We'll need a backend client for token auth if we restrict
 
 export default async function uploadHandler(
   request: VercelRequest,

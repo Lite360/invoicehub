@@ -112,7 +112,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           from: 'InvoiceHub <billing@invoicehub.com>',
           to: [invoice.clientEmail],
           subject: `Payment Receipt ${receiptNumber} from ${business.name}`,
-          html: render(ReceiptEmail({ receipt: newReceipt, business, dashboardLink })),
+          html: await render(ReceiptEmail({ receipt: newReceipt, business, dashboardLink })),
         });
         console.log(`✅ Receipt email sent to ${invoice.clientEmail}`);
       } catch (emailErr) {

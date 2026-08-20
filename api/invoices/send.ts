@@ -50,7 +50,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       from: 'InvoiceHub <billing@invoicehub.com>', // Note: in production, you must verify your own domain
       to: [invoice.clientEmail],
       subject: `Invoice ${invoice.invoiceNumber} from ${business.name}`,
-      html: render(InvoiceEmail({ invoice, business, paymentLink })),
+      html: await render(InvoiceEmail({ invoice, business, paymentLink })),
     });
 
     // Update the invoice status to "sent" if it's currently a draft
