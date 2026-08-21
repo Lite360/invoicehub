@@ -65,7 +65,7 @@ export default function CompanySetupWizard() {
       });
 
       if (!response.ok) {
-         throw new Error('Failed to save setup');
+        throw new Error('Failed to save setup');
       }
 
       navigate('/app/dashboard');

@@ -6,6 +6,9 @@ export default async function uploadHandler(
   response: VercelResponse,
 ) {
   const body = (request.body as HandleUploadBody);
+  console.log('--- UPLOAD REQUEST ---');
+  console.log('Headers:', request.headers);
+  console.log('Body:', body);
 
   try {
     const jsonResponse = await handleUpload({
@@ -19,7 +22,7 @@ export default async function uploadHandler(
         }
 
         return {
-          allowedContentTypes: ['image/jpeg', 'image/png', 'image/webp'],
+          allowedContentTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
           tokenPayload: JSON.stringify({}),
         };
       },
