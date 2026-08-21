@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { upload } from '@vercel/blob/client';
+
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabase';
 
@@ -21,11 +21,21 @@ export default function StepLogo({ data, updateData }: { data: string, updateDat
       const { data: sessionData } = await supabase.auth.getSession();
       const token = sessionData.session?.access_token || '';
 
-      const newBlob = await upload(file.name, file, {
-        access: 'public',
-        handleUploadUrl: '/api/upload',
-        clientPayload: token, // Pass auth token inside clientPayload so server can verify
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        headers: {
+          'Content-Type': file.type,
+          'x-vercel-filename': file.name,
+          'Authorization': token,
+        },
+        body: file,
       });
+
+      if (!res.ok) {
+        throw new Error('Upload failed');
+      }
+      
+      const newBlob = await res.json();
       
       updateData(newBlob.url);
       setLocalPreview(null); // Clear local preview once we have the real URL

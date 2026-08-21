@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { upload } from '@vercel/blob/client';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -60,11 +60,21 @@ export default function StepSignature({ data, updateData }: { data: any, updateD
             const { data: sessionData } = await supabase.auth.getSession();
             const token = sessionData.session?.access_token || '';
 
-            const newBlob = await upload(`signature-${Date.now()}.png`, blob, {
-              access: 'public',
-              handleUploadUrl: '/api/upload',
-              clientPayload: token,
+            const res = await fetch('/api/upload', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'image/png',
+                'x-vercel-filename': `signature-${Date.now()}.png`,
+                'Authorization': token,
+              },
+              body: blob,
             });
+
+            if (!res.ok) {
+              throw new Error('Upload failed');
+            }
+
+            const newBlob = await res.json();
 
             updateData({ ...data, url: newBlob.url, type: 'upload' });
             setLocalPreview(null);
