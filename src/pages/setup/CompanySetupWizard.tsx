@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
@@ -12,23 +12,33 @@ import StepWatermark from '@/components/setup/StepWatermark';
 import StepTemplate from '@/components/setup/StepTemplate';
 
 export default function CompanySetupWizard() {
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(() => Number(localStorage.getItem('setup_currentStep')) || 1);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   // Shared Form State
-  const [businessInfo, setBusinessInfo] = useState({});
-  const [logoUrl, setLogoUrl] = useState('');
-  const [brandColors, setBrandColors] = useState({
+  const [businessInfo, setBusinessInfo] = useState(() => JSON.parse(localStorage.getItem('setup_businessInfo') || '{}'));
+  const [logoUrl, setLogoUrl] = useState(() => localStorage.getItem('setup_logoUrl') || '');
+  const [brandColors, setBrandColors] = useState(() => JSON.parse(localStorage.getItem('setup_brandColors') || 'null') || {
     primary: '#0f172a',
     secondary: '#334155',
     accent: '#3b82f6',
     background: '#ffffff',
     text: '#020617',
   });
-  const [signature, setSignature] = useState({ type: 'upload', text: '', url: '' });
-  const [watermark, setWatermark] = useState({ enabled: false, type: 'text', text: '', opacity: 10, position: 'center', rotation: -45 });
-  const [defaultTemplate, setDefaultTemplate] = useState('modern');
+  const [signature, setSignature] = useState(() => JSON.parse(localStorage.getItem('setup_signature') || 'null') || { type: 'upload', text: '', url: '' });
+  const [watermark, setWatermark] = useState(() => JSON.parse(localStorage.getItem('setup_watermark') || 'null') || { enabled: false, type: 'text', text: '', opacity: 10, position: 'center', rotation: -45 });
+  const [defaultTemplate, setDefaultTemplate] = useState(() => localStorage.getItem('setup_defaultTemplate') || 'modern');
+
+  // Sync to localStorage
+  useEffect(() => { localStorage.setItem('setup_currentStep', currentStep.toString()); }, [currentStep]);
+  useEffect(() => { localStorage.setItem('setup_businessInfo', JSON.stringify(businessInfo)); }, [businessInfo]);
+  useEffect(() => { localStorage.setItem('setup_logoUrl', logoUrl); }, [logoUrl]);
+  useEffect(() => { localStorage.setItem('setup_brandColors', JSON.stringify(brandColors)); }, [brandColors]);
+  useEffect(() => { localStorage.setItem('setup_signature', JSON.stringify(signature)); }, [signature]);
+  useEffect(() => { localStorage.setItem('setup_watermark', JSON.stringify(watermark)); }, [watermark]);
+  useEffect(() => { localStorage.setItem('setup_defaultTemplate', defaultTemplate); }, [defaultTemplate]);
+
 
   const totalSteps = 6;
 
@@ -67,6 +77,10 @@ export default function CompanySetupWizard() {
       if (!response.ok) {
         throw new Error('Failed to save setup');
       }
+
+      // Clear local storage
+      const keysToRemove = ['setup_currentStep', 'setup_businessInfo', 'setup_logoUrl', 'setup_brandColors', 'setup_signature', 'setup_watermark', 'setup_defaultTemplate'];
+      keysToRemove.forEach(key => localStorage.removeItem(key));
 
       navigate('/app/dashboard');
     } catch (error) {
