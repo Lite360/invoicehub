@@ -50,7 +50,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  const segments = (req.query.path as string[]) || [];
+  const pathname = req.url ? req.url.split('?')[0] : '';
+  const segments = pathname.replace(/^\/api\/?/, '').split('/').filter(Boolean);
   const [seg0, seg1, seg2] = segments;
 
   try {
