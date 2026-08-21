@@ -5,12 +5,12 @@ export default async function uploadHandler(
   request: VercelRequest,
   response: VercelResponse,
 ) {
-  const body = (request.body as HandleUploadBody);
-  console.log('--- UPLOAD REQUEST ---');
-  console.log('Headers:', request.headers);
-  console.log('Body:', body);
-
   try {
+    const body = (request.body as HandleUploadBody);
+    console.log('--- UPLOAD REQUEST ---');
+    console.log('Headers:', request.headers);
+    console.log('Body:', body);
+
     const jsonResponse = await handleUpload({
       body,
       request,
@@ -33,6 +33,11 @@ export default async function uploadHandler(
 
     return response.status(200).json(jsonResponse);
   } catch (error) {
-    return response.status(400).json({ error: (error as Error).message });
+    console.error('Upload handler crash:', error);
+    return response.status(500).json({ 
+      error: 'Upload handler crashed', 
+      details: (error as Error).message,
+      stack: (error as Error).stack 
+    });
   }
 }
