@@ -168,9 +168,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const jsonResponse = await handleUpload({
           body: req.body as HandleUploadBody,
           request: req,
-          onBeforeGenerateToken: async (_pathname, _clientPayload) => {
-            const authHeader = req.headers.authorization;
-            if (!authHeader) throw new Error('Unauthorized');
+          onBeforeGenerateToken: async (_pathname, clientPayload) => {
+            const token = req.headers.authorization || clientPayload;
+            if (!token) throw new Error('Unauthorized');
             return { allowedContentTypes: ['image/jpeg', 'image/png', 'image/webp'], tokenPayload: JSON.stringify({}) };
           },
           onUploadCompleted: async ({ blob, tokenPayload }) => {
