@@ -7,9 +7,13 @@ import { supabase } from '@/lib/supabase';
 
 export default function StepSignature({ data, updateData }: { data: any, updateData: (data: any) => void }) {
   const [uploading, setUploading] = useState(false);
+  const [localPreview, setLocalPreview] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const processSignatureImage = (file: File) => {
+    // Show local preview instantly
+    const objectUrl = URL.createObjectURL(file);
+    setLocalPreview(objectUrl);
     setUploading(true);
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -63,9 +67,11 @@ export default function StepSignature({ data, updateData }: { data: any, updateD
             });
 
             updateData({ ...data, url: newBlob.url, type: 'upload' });
+            setLocalPreview(null);
           } catch (error) {
             console.error(error);
             alert('Signature upload failed.');
+            setLocalPreview(null);
           } finally {
             setUploading(false);
           }
@@ -75,6 +81,8 @@ export default function StepSignature({ data, updateData }: { data: any, updateD
     };
     reader.readAsDataURL(file);
   };
+
+  const displayImage = localPreview || data.url;
 
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
@@ -127,11 +135,16 @@ export default function StepSignature({ data, updateData }: { data: any, updateD
             }}
           />
           
-          <div className="mt-4 p-4 border-2 border-dashed rounded-lg bg-gray-50 flex items-center justify-center min-h-[150px]">
-            {uploading ? (
-              <span className="text-gray-400">Processing and uploading...</span>
-            ) : data.url ? (
-              <img src={data.url} alt="Processed Signature" className="max-h-32 object-contain" />
+          <div className="mt-4 p-4 border-2 border-dashed rounded-lg bg-gray-50 flex items-center justify-center min-h-[150px] relative overflow-hidden">
+            {displayImage ? (
+              <>
+                <img src={displayImage} alt="Processed Signature" className={`max-h-32 object-contain transition-opacity duration-300 ${uploading ? 'opacity-50' : 'opacity-100'}`} />
+                {uploading && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-white/50">
+                    <div className="animate-spin rounded-full h-8 w-8 border-4 border-emerald-600 border-t-transparent" />
+                  </div>
+                )}
+              </>
             ) : (
               <span className="text-gray-400">Preview will appear here</span>
             )}
