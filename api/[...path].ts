@@ -8,7 +8,6 @@ import {
 } from '../src/db/schema';
 import { eq, and, desc, count } from 'drizzle-orm';
 import { createClient } from '@supabase/supabase-js';
-import { handleUpload, type HandleUploadBody } from '@vercel/blob/client';
 import { put } from '@vercel/blob';
 import { getResendClient } from './_lib/emailClient';
 import { render } from '@react-email/components';
@@ -162,26 +161,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(200).json(history);
     }
 
-    // ── Upload (Vercel Blob client upload) ──────────────────────────────────
-    if (seg0 === 'upload' && !seg1) {
-      try {
-        const jsonResponse = await handleUpload({
-          body: req.body as HandleUploadBody,
-          request: req,
-          onBeforeGenerateToken: async (_pathname, clientPayload) => {
-            const token = req.headers.authorization || clientPayload;
-            if (!token) throw new Error('Unauthorized');
-            return { allowedContentTypes: ['image/jpeg', 'image/png', 'image/webp'], tokenPayload: JSON.stringify({}) };
-          },
-          onUploadCompleted: async ({ blob, tokenPayload }) => {
-            console.log('blob upload completed', blob, tokenPayload);
-          },
-        });
-        return res.status(200).json(jsonResponse);
-      } catch (error) {
-        return res.status(400).json({ error: (error as Error).message });
-      }
-    }
+    // ── Upload is handled by dedicated api/upload.ts ────────────────────────
 
     // ── Upload PDF ──────────────────────────────────────────────────────────
     if (seg0 === 'upload-pdf') {
