@@ -37,7 +37,7 @@ export default async function uploadHandler(
     }
 
     const blob = await put(filename, buffer, {
-      access: 'public',
+      access: 'private',
       contentType,
     });
 
