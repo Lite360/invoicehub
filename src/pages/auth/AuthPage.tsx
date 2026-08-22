@@ -10,17 +10,17 @@ export default function AuthPage() {
   const activeTab = searchParams.get('tab') || 'login';
   const navigate = useNavigate();
   const { settings } = usePlatform();
-  const { session, business, loading: authLoading } = useAuth();
+  const { session, business, loading: authLoading, businessLoading } = useAuth();
 
   useEffect(() => {
-    if (session && !authLoading) {
+    if (session && !authLoading && !businessLoading) {
       if (business) {
         navigate('/app/dashboard');
       } else {
         navigate('/setup');
       }
     }
-  }, [session, business, authLoading, navigate]);
+  }, [session, business, authLoading, businessLoading, navigate]);
 
   // Login state
   const [loginEmail, setLoginEmail] = useState('');
