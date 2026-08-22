@@ -16,10 +16,15 @@ import { QuotationEmail } from '../src/emails/QuotationEmail';
 import { ReceiptEmail } from '../src/emails/ReceiptEmail';
 
 // ─── Supabase client (uses anon key for user auth validation) ───────────────
-const supabase = createClient(
-  process.env.VITE_SUPABASE_URL || '',
-  process.env.VITE_SUPABASE_ANON_KEY || ''
-);
+let supabase: ReturnType<typeof createClient>;
+try {
+  supabase = createClient(
+    process.env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co',
+    process.env.VITE_SUPABASE_ANON_KEY || 'placeholder'
+  );
+} catch (error) {
+  console.error("Failed to initialize Supabase client:", error);
+}
 
 // ─── Auth helpers ────────────────────────────────────────────────────────────
 async function getUser(req: VercelRequest) {
