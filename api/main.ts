@@ -775,6 +775,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   } catch (error: any) {
     console.error('API Error:', error);
-    return res.status(500).json({ error: error.message || 'Internal server error' });
+    return res.status(500).json({ 
+      error: error.message || 'Internal server error',
+      details: error.detail || error.stack || String(error)
+    });
   }
 }
