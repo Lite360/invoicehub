@@ -17,8 +17,7 @@ async function makeAdmin(email: string) {
     const [user] = await db.select().from(schema.users).where(eq(schema.users.email, email));
     
     if (!user) {
-      console.error('User not found!');
-      process.exit(1);
+      throw new Error('User not found! Please register this email in the app first.');
     }
 
     // Ensure super_admin role exists
@@ -37,11 +36,10 @@ async function makeAdmin(email: string) {
     }).onConflictDoNothing();
 
     console.log('✅ Success! The user is now a Super Admin.');
-  } catch (error) {
-    console.error('Error:', error);
+  } catch (error: any) {
+    console.error('Error:', error.message);
   } finally {
     await client.end();
-    process.exit(0);
   }
 }
 
