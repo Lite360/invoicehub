@@ -5,12 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-type Tab = 'profile' | 'business' | 'branding';
+type Tab = 'profile' | 'business' | 'branding' | 'banking';
 
 const TABS: { key: Tab; label: string; icon: string }[] = [
   { key: 'profile', label: 'Profile', icon: '👤' },
   { key: 'business', label: 'Company', icon: '🏢' },
   { key: 'branding', label: 'Branding', icon: '🎨' },
+  { key: 'banking', label: 'Banking', icon: '🏦' },
 ];
 
 async function fetchSettings(token: string) {
@@ -47,6 +48,11 @@ export default function SettingsPage() {
   const [bizTaxId, setBizTaxId] = useState('');
   const [bizCurrency, setBizCurrency] = useState('NGN');
 
+  // --- Banking State ---
+  const [bankName, setBankName] = useState('');
+  const [bankAccountName, setBankAccountName] = useState('');
+  const [bankAccountNumber, setBankAccountNumber] = useState('');
+
   // --- Branding State ---
   const [primaryColor, setPrimaryColor] = useState('#0f172a');
   const [secondaryColor, setSecondaryColor] = useState('#334155');
@@ -69,6 +75,10 @@ export default function SettingsPage() {
       setBizRegNum(data.business?.registrationNumber ?? '');
       setBizTaxId(data.business?.taxId ?? '');
       setBizCurrency(data.business?.currency ?? 'NGN');
+      // Banking
+      setBankName(data.business?.bankName ?? '');
+      setBankAccountName(data.business?.bankAccountName ?? '');
+      setBankAccountNumber(data.business?.bankAccountNumber ?? '');
       // Branding
       setPrimaryColor(data.branding?.primaryColor ?? '#0f172a');
       setSecondaryColor(data.branding?.secondaryColor ?? '#334155');
@@ -103,6 +113,13 @@ export default function SettingsPage() {
       name: bizName, type: bizType, email: bizEmail, phone: bizPhone,
       address: bizAddress, website: bizWebsite, registrationNumber: bizRegNum,
       taxId: bizTaxId, currency: bizCurrency,
+    },
+  });
+  const saveBanking = () => saveMutation.mutate({
+    section: 'business',
+    payload: {
+      name: bizName || data?.business?.name || '',
+      bankName, bankAccountName, bankAccountNumber,
     },
   });
   const saveBranding = () => saveMutation.mutate({
@@ -313,6 +330,78 @@ export default function SettingsPage() {
                 className="bg-emerald-600 hover:bg-emerald-700"
               >
                 {saveMutation.isPending ? 'Saving...' : 'Save Branding'}
+              </Button>
+            </div>
+          </>
+        )}
+
+        {/* BANKING TAB */}
+        {activeTab === 'banking' && (
+          <>
+            <div>
+              <h2 className="text-lg font-semibold text-gray-800 mb-1">Banking Details</h2>
+              <p className="text-sm text-gray-500">
+                These details appear in the footer of your invoices, quotations, and receipts so clients know exactly where to send payment.
+              </p>
+            </div>
+            <div className="flex items-start gap-3 bg-emerald-50 border border-emerald-100 rounded-xl p-4">
+              <span className="text-2xl">🏦</span>
+              <div>
+                <p className="text-sm font-semibold text-emerald-800">Invoice Footer</p>
+                <p className="text-xs text-emerald-600 mt-0.5">
+                  Once saved, your banking details will be shown in a "Banking Details" box at the bottom of every invoice you generate.
+                </p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2 md:col-span-2">
+                <Label>Bank Name</Label>
+                <Input
+                  value={bankName}
+                  onChange={(e) => setBankName(e.target.value)}
+                  placeholder="e.g. First Bank, GTBank, Zenith Bank, PalmPay"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Account Name</Label>
+                <Input
+                  value={bankAccountName}
+                  onChange={(e) => setBankAccountName(e.target.value)}
+                  placeholder="e.g. JOHN DOE ENTERPRISES"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Account Number</Label>
+                <Input
+                  value={bankAccountNumber}
+                  onChange={(e) => setBankAccountNumber(e.target.value)}
+                  placeholder="e.g. 0123456789"
+                  maxLength={20}
+                />
+              </div>
+            </div>
+            {(bankName || bankAccountName || bankAccountNumber) && (
+              <div className="border rounded-xl overflow-hidden">
+                <div className="bg-gray-50 px-4 py-2 border-b">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Footer Preview on Invoice</p>
+                </div>
+                <div className="p-4">
+                  <p className="font-semibold uppercase tracking-wider text-xs mb-3 text-gray-700">Banking Details</p>
+                  <div className="inline-block rounded-lg px-5 py-3 text-sm space-y-1 bg-gray-100 border border-gray-200">
+                    {bankName && <p><span className="font-medium text-gray-500">Bank:</span> <span className="font-semibold text-gray-800">{bankName}</span></p>}
+                    {bankAccountName && <p><span className="font-medium text-gray-500">Account Name:</span> <span className="font-semibold text-gray-800">{bankAccountName}</span></p>}
+                    {bankAccountNumber && <p><span className="font-medium text-gray-500">Account Number:</span> <span className="font-semibold text-gray-800">{bankAccountNumber}</span></p>}
+                  </div>
+                </div>
+              </div>
+            )}
+            <div className="pt-4 border-t">
+              <Button
+                onClick={saveBanking}
+                disabled={saveMutation.isPending}
+                className="bg-emerald-600 hover:bg-emerald-700"
+              >
+                {saveMutation.isPending ? 'Saving...' : 'Save Banking Details'}
               </Button>
             </div>
           </>

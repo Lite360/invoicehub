@@ -14,7 +14,11 @@ export interface Business {
   registrationNumber?: string | null;
   taxId?: string | null;
   currency: string;
+  bankName?: string | null;
+  bankAccountName?: string | null;
+  bankAccountNumber?: string | null;
 }
+
 
 export interface Branding {
   logoUrl?: string | null;
@@ -51,11 +55,20 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 async function fetchBusiness(token: string) {
-  const res = await fetch('/api/businesses/me', {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (!res.ok) return { business: null, branding: null, role: null };
-  return res.json();
+  try {
+    const res = await fetch('/api/businesses/me', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error('/api/businesses/me failed:', res.status, errText);
+      return { business: null, branding: null, role: null };
+    }
+    return res.json();
+  } catch (error) {
+    console.error('fetchBusiness network error:', error);
+    return { business: null, branding: null, role: null };
+  }
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {

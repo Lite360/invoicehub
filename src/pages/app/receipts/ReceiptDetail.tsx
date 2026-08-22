@@ -14,7 +14,7 @@ const STATUS_STYLES: Record<ReceiptStatus, string> = {
 
 export default function ReceiptDetail() {
   const { id } = useParams<{ id: string }>();
-  const { session } = useAuth();
+  const { session, business, branding } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { generateAndUpload, isGenerating } = useGeneratePDF();
@@ -160,7 +160,24 @@ export default function ReceiptDetail() {
 
       {/* Preview */}
       <div id="receipt-preview">
-         <InvoicePreview invoice={previewData} documentType="RECEIPT" />
+               <InvoicePreview
+          invoice={previewData}
+          documentType="RECEIPT"
+          branding={{
+            primaryColor: branding?.primaryColor,
+            accentColor: branding?.accentColor,
+            backgroundColor: branding?.backgroundColor,
+            textColor: branding?.textColor,
+            logoUrl: branding?.logoUrl ?? undefined,
+            businessName: business?.name,
+            businessAddress: business?.address ?? undefined,
+            businessEmail: business?.email ?? undefined,
+            businessPhone: business?.phone ?? undefined,
+            bankName: business?.bankName ?? undefined,
+            bankAccountName: business?.bankAccountName ?? undefined,
+            bankAccountNumber: business?.bankAccountNumber ?? undefined,
+          }}
+        />
       </div>
     </div>
   );

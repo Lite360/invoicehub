@@ -19,7 +19,7 @@ const STATUS_STYLES: Record<InvoiceStatus, string> = {
 
 export default function InvoiceDetail() {
   const { id } = useParams<{ id: string }>();
-  const { session } = useAuth();
+  const { session, business, branding } = useAuth();
   const { success, error: toastError } = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -228,7 +228,23 @@ export default function InvoiceDetail() {
 
       {/* Invoice Preview */}
       <div id="invoice-preview" className="shadow-2xl rounded-2xl overflow-hidden border border-gray-100 bg-white">
-        <InvoicePreview invoice={invoice} />
+        <InvoicePreview
+          invoice={invoice}
+          branding={{
+            primaryColor: branding?.primaryColor,
+            accentColor: branding?.accentColor,
+            backgroundColor: branding?.backgroundColor,
+            textColor: branding?.textColor,
+            logoUrl: branding?.logoUrl ?? undefined,
+            businessName: business?.name,
+            businessAddress: business?.address ?? undefined,
+            businessEmail: business?.email ?? undefined,
+            businessPhone: business?.phone ?? undefined,
+            bankName: business?.bankName ?? undefined,
+            bankAccountName: business?.bankAccountName ?? undefined,
+            bankAccountNumber: business?.bankAccountNumber ?? undefined,
+          }}
+        />
       </div>
 
       {/* Record Payment Modal */}

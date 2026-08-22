@@ -43,6 +43,9 @@ interface InvoicePreviewProps {
     businessAddress?: string;
     businessEmail?: string;
     businessPhone?: string;
+    bankName?: string;
+    bankAccountName?: string;
+    bankAccountNumber?: string;
   };
   documentType?: string;
 }
@@ -208,6 +211,27 @@ export default function InvoicePreview({ invoice, branding, documentType = 'INVO
               <p className="opacity-70 whitespace-pre-line">{invoice.paymentTerms}</p>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Banking Details */}
+      {(branding?.bankName || branding?.bankAccountName || branding?.bankAccountNumber) && (
+        <div className="px-10 py-5 border-t" style={{ borderColor: primary + '22' }}>
+          <p className="font-semibold uppercase tracking-wider text-xs mb-3" style={{ color: primary }}>Banking Details</p>
+          <div
+            className="inline-block rounded-lg px-5 py-3 text-sm space-y-1"
+            style={{ backgroundColor: primary + '0d', border: `1px solid ${primary}22` }}
+          >
+            {branding?.bankName && (
+              <p><span className="font-medium opacity-70">Bank:</span> <span className="font-semibold">{branding.bankName}</span></p>
+            )}
+            {branding?.bankAccountName && (
+              <p><span className="font-medium opacity-70">Account Name:</span> <span className="font-semibold">{branding.bankAccountName}</span></p>
+            )}
+            {branding?.bankAccountNumber && (
+              <p><span className="font-medium opacity-70">Account Number:</span> <span className="font-semibold">{branding.bankAccountNumber}</span></p>
+            )}
+          </div>
         </div>
       )}
 

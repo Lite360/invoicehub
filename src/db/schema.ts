@@ -21,6 +21,10 @@ export const businesses = pgTable("businesses", {
   registrationNumber: text("registration_number"),
   taxId: text("tax_id"),
   currency: text("currency").default("NGN"),
+  // Bank details (shown in invoice footer)
+  bankName: text("bank_name"),
+  bankAccountName: text("bank_account_name"),
+  bankAccountNumber: text("bank_account_number"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
