@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { usePlatform } from '@/contexts/PlatformContext';
+import { useAuth } from '@/contexts/AuthContext';
 import './AuthPage.css';
 
 export default function AuthPage() {
@@ -9,6 +10,17 @@ export default function AuthPage() {
   const activeTab = searchParams.get('tab') || 'login';
   const navigate = useNavigate();
   const { settings } = usePlatform();
+  const { session, business, loading: authLoading } = useAuth();
+
+  useEffect(() => {
+    if (session && !authLoading) {
+      if (business) {
+        navigate('/app/dashboard');
+      } else {
+        navigate('/setup');
+      }
+    }
+  }, [session, business, authLoading, navigate]);
 
   // Login state
   const [loginEmail, setLoginEmail] = useState('');

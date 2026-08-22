@@ -42,5 +42,10 @@ export default function ProtectedRoute({ requireBusiness = true }: Props) {
     return <Navigate to="/setup" replace />;
   }
 
+  // If they already have a business and try to access /setup, redirect to dashboard
+  if (!requireBusiness && business && location.pathname === '/setup') {
+    return <Navigate to="/app/dashboard" replace />;
+  }
+
   return <Outlet />;
 }
