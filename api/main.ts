@@ -775,6 +775,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   } catch (error: any) {
     console.error('API Error:', error);
+    if (!process.env.DATABASE_URL) {
+      return res.status(500).json({ 
+        error: 'DATABASE_URL is missing in Vercel Environment Variables',
+        details: 'Please add DATABASE_URL in your Vercel Dashboard.'
+      });
+    }
     return res.status(500).json({ 
       error: error.message || 'Internal server error',
       details: error.detail || error.stack || String(error)
