@@ -64,7 +64,11 @@ const STATS = [
   { label: 'Time Saved', value: '10K+ hrs' },
 ];
 
+import { usePlatform } from '@/contexts/PlatformContext';
+
 export default function LandingPage() {
+  const { settings } = usePlatform();
+  
   return (
     <div className="min-h-screen bg-white font-sans">
       {/* NAV */}
@@ -74,7 +78,7 @@ export default function LandingPage() {
             <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center text-white font-bold text-sm">
               IH
             </div>
-            <span className="text-lg font-bold text-gray-900">InvoiceHub</span>
+            <span className="text-lg font-bold text-gray-900">{settings.siteName}</span>
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
             <a href="#features" className="hover:text-gray-900 transition-colors">Features</a>
@@ -304,7 +308,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-md bg-emerald-600 flex items-center justify-center text-white font-bold text-xs">IH</div>
-            <span className="font-bold text-white text-sm">InvoiceHub</span>
+            <span className="font-bold text-white text-sm">{settings.siteName}</span>
             <span className="text-xs">— Create. Send. Get Paid.</span>
           </div>
           <div className="flex items-center gap-6 text-sm">
@@ -312,7 +316,7 @@ export default function LandingPage() {
             <Link to="/login" className="hover:text-white transition-colors">Sign In</Link>
             <Link to="/register" className="hover:text-white transition-colors">Sign Up</Link>
           </div>
-          <p className="text-xs">© {new Date().getFullYear()} InvoiceHub. All rights reserved.</p>
+          <p className="text-xs">© {new Date().getFullYear()} {settings.siteName}. All rights reserved.</p>
         </div>
       </footer>
     </div>

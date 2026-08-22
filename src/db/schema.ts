@@ -282,3 +282,11 @@ export const subscriptions = pgTable("subscriptions", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+// --- Platform Settings ---
+export const platformSettings = pgTable("platform_settings", {
+  id: text("id").primaryKey().default("default"), // Only one row, id is "default"
+  siteName: text("site_name").notNull().default("InvoicePoint"),
+  contactEmail: text("contact_email"),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});

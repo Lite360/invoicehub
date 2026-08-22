@@ -4,7 +4,7 @@ import { db } from '../src/db';
 import {
   users, businesses, brandingSettings, signatureSettings, watermarkSettings,
   customers, invoices, invoiceItems, quotations, quotationItems,
-  receipts, receiptItems, letters, payments, plans, subscriptions, userRoles,
+  receipts, receiptItems, letters, payments, plans, subscriptions, userRoles, platformSettings,
 } from '../src/db/schema';
 import { eq, and, desc, count } from 'drizzle-orm';
 import { createClient } from '@supabase/supabase-js';
@@ -740,6 +740,33 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const offset = (page - 1) * limit;
         const allPayments = await db.select({ id: payments.id, businessId: payments.businessId, businessName: businesses.name, clientName: payments.clientName, amount: payments.amount, currency: payments.currency, paymentMethod: payments.paymentMethod, reference: payments.reference, status: payments.status, paymentDate: payments.paymentDate, notes: payments.notes, createdAt: payments.createdAt }).from(payments).leftJoin(businesses, eq(businesses.id, payments.businessId)).orderBy(desc(payments.createdAt)).limit(limit).offset(offset);
         return res.status(200).json({ payments: allPayments, page, limit });
+      }
+    }
+
+    // ── Platform Settings ──────────────────────────────────────────────────
+    if (seg0 === 'platform' && seg1 === 'settings') {
+      if (req.method === 'GET') {
+        let [settings] = await db.select().from(platformSettings).where(eq(platformSettings.id, 'default'));
+        if (!settings) {
+          [settings] = await db.insert(platformSettings).values({ id: 'default', siteName: 'InvoicePoint' }).returning();
+        }
+        return res.status(200).json(settings);
+      }
+
+      if (req.method === 'POST') {
+        const user = await getAdminUser(req);
+        if (!user) return res.status(401).json({ error: 'Unauthorized' });
+        
+        const { siteName, contactEmail } = req.body;
+        const [settings] = await db.insert(platformSettings)
+          .values({ id: 'default', siteName, contactEmail, updatedAt: new Date() })
+          .onConflictDoUpdate({
+            target: platformSettings.id,
+            set: { siteName, contactEmail, updatedAt: new Date() }
+          })
+          .returning();
+        
+        return res.status(200).json(settings);
       }
     }
 

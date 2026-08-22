@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
+import { usePlatform } from '@/contexts/PlatformContext';
 import './AuthPage.css';
 
 export default function AuthPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get('tab') || 'login';
   const navigate = useNavigate();
+  const { settings } = usePlatform();
 
   // Login state
   const [loginEmail, setLoginEmail] = useState('');
@@ -93,7 +95,7 @@ export default function AuthPage() {
             <div className="auth-logo-mark">
               <i className="fa-solid fa-file-invoice" />
             </div>
-            <span className="auth-logo-brand">InvoiceHub</span>
+            <span className="auth-logo-brand">{settings.siteName}</span>
           </Link>
 
           {/* Tabs */}
