@@ -32,16 +32,17 @@ export default function StepLogo({ data, updateData }: { data: string, updateDat
       });
 
       if (!res.ok) {
-        throw new Error('Upload failed');
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.details || err.error || 'Upload failed');
       }
       
       const newBlob = await res.json();
       
       updateData(newBlob.url);
       setLocalPreview(null); // Clear local preview once we have the real URL
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      alert('Upload failed. Please try again.');
+      alert(`Upload failed: ${error.message}`);
       setLocalPreview(null); // Revert preview on failure
     } finally {
       setUploading(false);
