@@ -8,7 +8,7 @@ import {
 } from '../src/db/schema';
 import { eq, and, desc, count } from 'drizzle-orm';
 import { createClient } from '@supabase/supabase-js';
-import { put, handleUpload, type HandleUploadBody } from '@vercel/blob';
+import { put } from '@vercel/blob';
 import { getResendClient } from './_lib/emailClient';
 import { render } from '@react-email/components';
 import { InvoiceEmail } from '../src/emails/InvoiceEmail';
