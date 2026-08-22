@@ -1,11 +1,13 @@
-import { put } from '@vercel/blob';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { createClient } from '@supabase/supabase-js';
 
 export const config = {
   api: {
     bodyParser: false,
   },
 };
+
+const BUCKET = 'uploads';
 
 export default async function uploadHandler(
   request: VercelRequest,
@@ -22,21 +24,25 @@ export default async function uploadHandler(
       return response.status(405).json({ error: 'Method not allowed' });
     }
 
-    const token = process.env.BLOB_READ_WRITE_TOKEN;
-    if (!token) {
-      console.error('BLOB_READ_WRITE_TOKEN is not set');
-      return response.status(500).json({ error: 'Upload failed', details: 'Storage token not configured' });
+    const supabaseUrl = process.env.VITE_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceRoleKey) {
+      console.error('Supabase env vars missing');
+      return response.status(500).json({ error: 'Upload failed', details: 'Storage not configured' });
     }
+
+    const supabase = createClient(supabaseUrl, serviceRoleKey);
 
     const contentType = (request.headers['content-type'] as string) || 'application/octet-stream';
     const rawFilename = (request.headers['x-vercel-filename'] as string) || `upload-${Date.now()}`;
-    // Ensure filename has an extension based on content type
     const ext = contentType.split('/')[1]?.replace('jpeg', 'jpg') || 'bin';
     const filename = rawFilename.includes('.') ? rawFilename : `${rawFilename}.${ext}`;
+    const path = `${Date.now()}-${filename}`;
 
     console.log(`[upload] Receiving: ${filename} (${contentType})`);
 
-    // Read raw body as buffer using traditional events to avoid Windows Vercel dev stream crashes
+    // Read raw body as buffer
     const buffer = await new Promise<Buffer>((resolve, reject) => {
       const chunks: Buffer[] = [];
       request.on('data', (chunk) => chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk)));
@@ -50,14 +56,26 @@ export default async function uploadHandler(
 
     console.log(`[upload] Buffer size: ${buffer.length} bytes`);
 
-    const blob = await put(filename, buffer, {
-      access: 'public',
-      contentType,
-      token,
-    });
+    const { error } = await supabase.storage
+      .from(BUCKET)
+      .upload(path, buffer, {
+        contentType,
+        upsert: true,
+      });
 
-    console.log(`[upload] Success: ${blob.url}`);
-    return response.status(200).json(blob);
+    if (error) {
+      console.error('[upload] Supabase storage error:', error.message);
+      return response.status(500).json({ error: 'Upload failed', details: error.message });
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from(BUCKET)
+      .getPublicUrl(path);
+
+    console.log(`[upload] Success: ${publicUrl}`);
+
+    // Return in same shape as Vercel Blob for frontend compatibility
+    return response.status(200).json({ url: publicUrl, pathname: path });
   } catch (error: any) {
     console.error('Upload handler error:', error);
     return response.status(500).json({
