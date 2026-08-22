@@ -213,6 +213,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         const { businessInfo, logoUrl, brandColors, defaultTemplate, signature, watermark } = req.body;
         await db.transaction(async (tx) => {
+          // Ensure user exists in the public.users table to satisfy foreign key constraint
+          const [existingUser] = await tx.select().from(users).where(eq(users.id, user.id));
+          if (!existingUser) {
+            await tx.insert(users).values({
+              id: user.id,
+              email: user.email || '',
+              fullName: user.user_metadata?.full_name || 'Business Owner',
+              phoneNumber: user.phone || null,
+            });
+          }
+
           const [newBusiness] = await tx.insert(businesses).values({
             ownerId: user.id, name: businessInfo.name, type: businessInfo.type, email: businessInfo.email,
             phone: businessInfo.phone, address: businessInfo.address, website: businessInfo.website,
