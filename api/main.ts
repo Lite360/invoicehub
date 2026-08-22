@@ -222,27 +222,84 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         if (authError || !user) return res.status(401).json({ error: 'Unauthorized' });
 
         const { businessInfo, logoUrl, brandColors, defaultTemplate, signature, watermark } = req.body;
-        await db.transaction(async (tx) => {
-          // Ensure user exists in the public.users table to satisfy foreign key constraint
-          const [existingUser] = await tx.select().from(users).where(eq(users.id, user.id));
-          if (!existingUser) {
-            await tx.insert(users).values({
-              id: user.id,
-              email: user.email || '',
-              fullName: user.user_metadata?.full_name || 'Business Owner',
-              phoneNumber: user.phone || null,
-            });
-          }
 
-          const [newBusiness] = await tx.insert(businesses).values({
-            ownerId: user.id, name: businessInfo.name, type: businessInfo.type, email: businessInfo.email,
-            phone: businessInfo.phone, address: businessInfo.address, website: businessInfo.website,
-            registrationNumber: businessInfo.registrationNumber, taxId: businessInfo.taxId, currency: businessInfo.currency,
+        if (!businessInfo?.name) {
+          return res.status(400).json({ error: 'Business name is required' });
+        }
+
+        // 1. Ensure user row exists (upsert — safe to retry)
+        await db.insert(users)
+          .values({
+            id: user.id,
+            email: user.email || '',
+            fullName: user.user_metadata?.full_name || businessInfo.name || 'Business Owner',
+            phoneNumber: user.phone || null,
+          })
+          .onConflictDoUpdate({
+            target: users.id,
+            set: { updatedAt: new Date() },
+          });
+
+        // 2. Upsert business (safe to retry — won't create duplicates)
+        let business = (await db.select().from(businesses).where(eq(businesses.ownerId, user.id)))[0];
+        if (!business) {
+          [business] = await db.insert(businesses).values({
+            ownerId: user.id,
+            name: businessInfo.name,
+            type: businessInfo.type || null,
+            email: businessInfo.email || null,
+            phone: businessInfo.phone || null,
+            address: businessInfo.address || null,
+            website: businessInfo.website || null,
+            registrationNumber: businessInfo.registrationNumber || null,
+            taxId: businessInfo.taxId || null,
+            currency: businessInfo.currency || 'NGN',
+            bankName: businessInfo.bankName || null,
+            bankAccountName: businessInfo.bankAccountName || null,
+            bankAccountNumber: businessInfo.bankAccountNumber || null,
           }).returning();
-          await tx.insert(brandingSettings).values({ businessId: newBusiness.id, logoUrl, primaryColor: brandColors.primary, secondaryColor: brandColors.secondary, accentColor: brandColors.accent, backgroundColor: brandColors.background, textColor: brandColors.text, defaultTemplate });
-          await tx.insert(signatureSettings).values({ businessId: newBusiness.id, signatureType: signature.type, signatureText: signature.text, signatureUrl: signature.url });
-          await tx.insert(watermarkSettings).values({ businessId: newBusiness.id, enabled: watermark.enabled, type: watermark.type, text: watermark.text, opacity: watermark.opacity, position: watermark.position, rotation: watermark.rotation });
-        });
+        } else {
+          [business] = await db.update(businesses).set({
+            name: businessInfo.name,
+            type: businessInfo.type || null,
+            email: businessInfo.email || null,
+            phone: businessInfo.phone || null,
+            address: businessInfo.address || null,
+            website: businessInfo.website || null,
+            registrationNumber: businessInfo.registrationNumber || null,
+            taxId: businessInfo.taxId || null,
+            currency: businessInfo.currency || 'NGN',
+            bankName: businessInfo.bankName || null,
+            bankAccountName: businessInfo.bankAccountName || null,
+            bankAccountNumber: businessInfo.bankAccountNumber || null,
+            updatedAt: new Date(),
+          }).where(eq(businesses.id, business.id)).returning();
+        }
+
+        // 3. Upsert branding settings
+        const existingBranding = (await db.select().from(brandingSettings).where(eq(brandingSettings.businessId, business.id)))[0];
+        if (existingBranding) {
+          await db.update(brandingSettings).set({ logoUrl, primaryColor: brandColors?.primary, secondaryColor: brandColors?.secondary, accentColor: brandColors?.accent, backgroundColor: brandColors?.background, textColor: brandColors?.text, defaultTemplate, updatedAt: new Date() }).where(eq(brandingSettings.id, existingBranding.id));
+        } else {
+          await db.insert(brandingSettings).values({ businessId: business.id, logoUrl, primaryColor: brandColors?.primary, secondaryColor: brandColors?.secondary, accentColor: brandColors?.accent, backgroundColor: brandColors?.background, textColor: brandColors?.text, defaultTemplate });
+        }
+
+        // 4. Upsert signature settings
+        const existingSig = (await db.select().from(signatureSettings).where(eq(signatureSettings.businessId, business.id)))[0];
+        if (existingSig) {
+          await db.update(signatureSettings).set({ signatureType: signature?.type, signatureText: signature?.text, signatureUrl: signature?.url, updatedAt: new Date() }).where(eq(signatureSettings.id, existingSig.id));
+        } else {
+          await db.insert(signatureSettings).values({ businessId: business.id, signatureType: signature?.type || 'upload', signatureText: signature?.text || null, signatureUrl: signature?.url || null });
+        }
+
+        // 5. Upsert watermark settings
+        const existingWm = (await db.select().from(watermarkSettings).where(eq(watermarkSettings.businessId, business.id)))[0];
+        if (existingWm) {
+          await db.update(watermarkSettings).set({ enabled: watermark?.enabled ?? false, type: watermark?.type, text: watermark?.text, opacity: watermark?.opacity, position: watermark?.position, rotation: watermark?.rotation, updatedAt: new Date() }).where(eq(watermarkSettings.id, existingWm.id));
+        } else {
+          await db.insert(watermarkSettings).values({ businessId: business.id, enabled: watermark?.enabled ?? false, type: watermark?.type || 'text', text: watermark?.text || null, opacity: watermark?.opacity ?? 10, position: watermark?.position || 'center', rotation: watermark?.rotation ?? -45 });
+        }
+
         return res.status(200).json({ success: true, message: 'Company setup complete.' });
       }
     }
