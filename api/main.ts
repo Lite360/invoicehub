@@ -198,12 +198,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const user = await getUser(req);
         if (!user) return res.status(401).json({ error: 'Unauthorized' });
         if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+        
+        // Fetch role
+        const [roleObj] = await db.select().from(userRoles).where(eq(userRoles.userId, user.id));
+        const role = roleObj ? roleObj.roleId : null;
+
         const [business] = await db.select().from(businesses).where(eq(businesses.ownerId, user.id));
-        if (!business) return res.status(404).json({ error: 'No business found' });
+        if (!business) {
+          // If no business, still return the role so admin users can bypass setup
+          return res.status(200).json({ business: null, branding: null, signature: null, watermark: null, role });
+        }
         const [branding] = await db.select().from(brandingSettings).where(eq(brandingSettings.businessId, business.id));
         const [signature] = await db.select().from(signatureSettings).where(eq(signatureSettings.businessId, business.id));
         const [watermark] = await db.select().from(watermarkSettings).where(eq(watermarkSettings.businessId, business.id));
-        return res.status(200).json({ business, branding, signature, watermark });
+        return res.status(200).json({ business, branding, signature, watermark, role });
       }
 
       if (seg1 === 'setup') {

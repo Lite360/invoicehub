@@ -1,4 +1,4 @@
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface Props {
@@ -6,7 +6,8 @@ interface Props {
 }
 
 export default function ProtectedRoute({ requireBusiness = true }: Props) {
-  const { session, loading, business, businessLoading } = useAuth();
+  const { session, loading, business, businessLoading, role } = useAuth();
+  const location = useLocation();
 
   // Show spinner while loading auth state
   if (loading || (session && businessLoading)) {
@@ -23,9 +24,21 @@ export default function ProtectedRoute({ requireBusiness = true }: Props) {
   // Not authenticated → login
   if (!session) return <Navigate to="/login" replace />;
 
+  const isAdmin = role === 'super_admin' || role === 'finance_admin';
+  const isAdminRoute = location.pathname.startsWith('/admin');
+
+  // If trying to access admin route but not an admin → redirect to app dashboard
+  if (isAdminRoute && !isAdmin) {
+    return <Navigate to="/app/dashboard" replace />;
+  }
+
   // Authenticated but no business yet → setup wizard
   // (only enforce this for app/* routes, not for the setup route itself)
   if (requireBusiness && !business) {
+    if (isAdmin) {
+      // Admins without a business shouldn't go to setup, they should go to their admin panel
+      return <Navigate to="/admin/dashboard" replace />;
+    }
     return <Navigate to="/setup" replace />;
   }
 

@@ -29,6 +29,7 @@ export interface Branding {
 interface AuthContextType {
   session: Session | null;
   user: User | null;
+  role: string | null;
   loading: boolean;
   business: Business | null;
   branding: Branding | null;
@@ -40,6 +41,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({
   session: null,
   user: null,
+  role: null,
   loading: true,
   business: null,
   branding: null,
@@ -52,13 +54,14 @@ async function fetchBusiness(token: string) {
   const res = await fetch('/api/businesses/me', {
     headers: { Authorization: `Bearer ${token}` },
   });
-  if (!res.ok) return { business: null, branding: null };
+  if (!res.ok) return { business: null, branding: null, role: null };
   return res.json();
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [role, setRole] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [business, setBusiness] = useState<Business | null>(null);
   const [branding, setBranding] = useState<Branding | null>(null);
@@ -70,9 +73,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const data = await fetchBusiness(token);
       setBusiness(data.business ?? null);
       setBranding(data.branding ?? null);
+      setRole(data.role ?? null);
     } catch {
       setBusiness(null);
       setBranding(null);
+      setRole(null);
     } finally {
       setBusinessLoading(false);
     }
@@ -106,6 +111,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         setBusiness(null);
         setBranding(null);
+        setRole(null);
         setBusinessLoading(false);
       }
     });
@@ -117,10 +123,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut();
     setBusiness(null);
     setBranding(null);
+    setRole(null);
   };
 
   return (
-    <AuthContext.Provider value={{ session, user, loading, business, branding, businessLoading, signOut, refreshBusiness }}>
+    <AuthContext.Provider value={{ session, user, role, loading, business, branding, businessLoading, signOut, refreshBusiness }}>
       {children}
     </AuthContext.Provider>
   );
