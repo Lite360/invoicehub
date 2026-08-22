@@ -16,21 +16,16 @@ export default async function uploadHandler(
       return response.status(405).json({ error: 'Method not allowed' });
     }
 
-    const contentType = request.headers['content-type'] || '';
+    const contentType = request.headers['content-type'] || 'application/octet-stream';
     const filename = (request.headers['x-vercel-filename'] as string) || `upload-${Date.now()}`;
 
-    // Validate content type
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-    if (!allowedTypes.some(t => contentType.startsWith(t))) {
-      return response.status(400).json({ error: 'Invalid file type' });
-    }
-
-    // Read raw body as buffer
-    const chunks: Buffer[] = [];
-    for await (const chunk of request) {
-      chunks.push(Buffer.from(chunk));
-    }
-    const buffer = Buffer.concat(chunks);
+    // Read raw body as buffer using traditional events to avoid Windows Vercel dev stream crashes
+    const buffer = await new Promise<Buffer>((resolve, reject) => {
+      const chunks: Buffer[] = [];
+      request.on('data', (chunk) => chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk)));
+      request.on('end', () => resolve(Buffer.concat(chunks)));
+      request.on('error', reject);
+    });
 
     if (buffer.length === 0) {
       return response.status(400).json({ error: 'Empty file' });
