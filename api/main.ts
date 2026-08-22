@@ -43,6 +43,8 @@ async function getBusinessForUser(userId: string) {
 
 // ─── Main catch-all handler ──────────────────────────────────────────────────
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  console.log(`[API ROUTER] Request: ${req.method} ${req.url} | Segments:`, req.url ? req.url.replace(/^\/api\/?/, '').split('/').filter(Boolean) : []);
+
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
