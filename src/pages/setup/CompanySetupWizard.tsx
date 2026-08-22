@@ -75,7 +75,8 @@ export default function CompanySetupWizard() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to save setup');
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || 'Failed to save setup');
       }
 
       // Clear local storage
