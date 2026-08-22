@@ -13,14 +13,30 @@ const db = drizzle(client, { schema });
 
 async function makeAdmin(email: string) {
   try {
-    console.log(`Checking user with email: ${email}`);
-    const [user] = await db.select().from(schema.users).where(eq(schema.users.email, email));
+    console.log(`Looking up user in auth.users: ${email}`);
     
+    // 1. Find user in auth.users first (source of truth)
+    const [authUser] = await client`SELECT id, email FROM auth.users WHERE email = ${email}`;
+    
+    if (!authUser) {
+      throw new Error(`User not found in auth.users! Make sure you have registered with email: ${email}`);
+    }
+    
+    console.log(`Found auth user: ${authUser.id}`);
+    
+    // 2. Ensure user exists in public.users (create if missing)
+    let [user] = await db.select().from(schema.users).where(eq(schema.users.id, authUser.id));
     if (!user) {
-      throw new Error('User not found! Please register this email in the app first.');
+      console.log('Creating public.users record...');
+      [user] = await db.insert(schema.users).values({
+        id: authUser.id,
+        email: authUser.email,
+        fullName: 'Admin',
+      }).returning();
+      console.log('Created public.users record.');
     }
 
-    // Ensure super_admin role exists
+    // 3. Ensure super_admin role exists
     console.log('Ensuring super_admin role exists...');
     await db.insert(schema.roles).values({
       id: 'super_admin',
@@ -28,7 +44,7 @@ async function makeAdmin(email: string) {
       description: 'Has full access to everything in the admin panel',
     }).onConflictDoNothing();
 
-    // Assign role to user
+    // 4. Assign role to user
     console.log(`Assigning super_admin role to user ID: ${user.id}`);
     await db.insert(schema.userRoles).values({
       userId: user.id,
