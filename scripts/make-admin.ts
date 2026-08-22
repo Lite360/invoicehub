@@ -1,15 +1,15 @@
 import { config } from 'dotenv';
 import { resolve } from 'path';
-import { neon } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-http';
+import postgres from 'postgres';
+import { drizzle } from 'drizzle-orm/postgres-js';
 import * as schema from '../src/db/schema';
 import { eq } from 'drizzle-orm';
 
 // Load .env
 config({ path: resolve(process.cwd(), '.env') });
 
-const sql = neon(process.env.DATABASE_URL!);
-const db = drizzle(sql, { schema });
+const client = postgres(process.env.DATABASE_URL!);
+const db = drizzle(client, { schema });
 
 async function makeAdmin(email: string) {
   try {
@@ -40,6 +40,7 @@ async function makeAdmin(email: string) {
   } catch (error) {
     console.error('Error:', error);
   } finally {
+    await client.end();
     process.exit(0);
   }
 }
