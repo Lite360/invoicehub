@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 
 export default function AdminSettings() {
   const { settings, refreshSettings } = usePlatform();
-  const { showToast } = useToast();
+  const toast = useToast();
   
   const [siteName, setSiteName] = useState(settings.siteName || '');
   const [contactEmail, setContactEmail] = useState(settings.contactEmail || '');
@@ -32,9 +32,9 @@ export default function AdminSettings() {
       if (!res.ok) throw new Error('Failed to save settings');
       
       await refreshSettings();
-      showToast('Settings saved successfully', 'success');
+      toast.success('Settings saved successfully');
     } catch (error: any) {
-      showToast(error.message || 'Failed to save settings', 'error');
+      toast.error(error.message || 'Failed to save settings');
     } finally {
       setSaving(false);
     }
